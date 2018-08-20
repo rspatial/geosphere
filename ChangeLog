@@ -1,0 +1,58 @@
+-- to do
+inconsistency reported by Ryan Case: bearing is expressed as -180 to 180 whereas bearingRhum is from 0 to 360
+
+-- Current version
+dist* functions threw an error when using a two row matrix  for p1, and missing p2. Fixed by setting "drop=FALSE". Bug report and fix by Miles Wood.
+
+-- 2 November 2018, version 1.5.7
+distHaversine bugged in some cases for antipodes: https://stackoverflow.com/questions/45889616/why-does-disthaversine-return-nan-for-some-pairs-of-coordinates#
+dist2gc always returned a positive value (the manual said it should be negative if it was at the left of the circle); in contrast with what the manual stated. Getting the sign is now an option. Reported by Charles Mohan, Hughan Ross and David Cooley
+dist2gc used the bearing for an ellipsoid, not for a spheroid. Reported by Greg Whittier
+
+-- 15 June 2016, version 1.5-5
+Fixed error in gcMaxLat (reported by William Smith)
+Bug fix in antipodal (reported by Gareth Davies)
+Bug fix in gcIntermediate when crossing the date line
+
+-- 7 July 2015, version 1.4-3
+Included C-version of GeographicLib by C.F.F. Karney. areaPolygon and perimeter are now using that to compute these on a (WGS84) ellipsoid. New function distGeo (distance on an ellipsoid) also uses this.
+
+-- 17 January 2014, version 1.3-8
+Fixed bug in destPointRhumb. Reported by Bart Kranstauber
+Fixed bug in bearingRhumb when using multiple points (incorrect results were returned). Reported by Bart Kranstauber
+Added 'ID' output to dist2Line
+distVincentyEllipsoid returned a distance of 0 between NA and NA; now it returns NA as intended (reported by Sebastian Luque)
+Fixed minor bug in distMeeus (using 'isTRUE' where 'which' is appropriate) (reported by Tyler Smith)
+
+-- 4 March 2012, version 1.2-27
+Bug fix in antipodal; reported by Bart Kranstauber
+Fixed bug in distMeeus. It returned NaN when the distance between two points was 0. Reportedby Daniel Reidpath
+New function geomean to compute the mean of a set of coordinates (optionally with weights)
+
+-- 28 August 2011, version 1.2-25
+Correction to gcIntermediate. Points were not exactly equidistant. Error spotted by Jason Davies.
+
+-- 18 May 2011, version 1.2-21
+Normalizing longitude to -180..180 in midPoint. Suggested by Aaron Hardin
+
+-- 13 Jan 2011, version 1.2-18
+New argument sepNA in gcIntermediate, suggested by Lee Butterman
+
+-- 1 Jan 2011, version 1.2-17
+Merged functions distm and distm2 into distm
+Function with new distance algorithm "distMeeus"
+
+-- 4 Nov 2010
+Additional options to gcIntermediate and greatCircle to return SpatialLines (that are cut in two when crossing the date line)
+
+-- 8 Sept 2010
+bug fix in .pointsToMatrix (reported by Joe)
+
+-- 26 August 2010
+New functions:
+dist2Line computes the (spherical) distance between points and polylines (and polygons borders).
+makeLine (like makePoly), adds intermediate great circle points to line segments, for better plotting
+onGreatCircle tests if points are on a specified great circle
+
+-- 25 August 2010
+distVincentyEllipsoid now handles NA values. Bug fix suggested by George Wang.
