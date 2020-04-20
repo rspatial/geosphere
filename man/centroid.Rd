@@ -8,7 +8,7 @@
 \title{Centroid of spherical polygons}
 
 \description{
-Compute the centroid of longitude/latitude polygons. Unlike other functions in this package, there is no spherical trigonomery involved in the implementation of this function. Instead, the function projects the polygon to the (conformal) Mercator coordinate reference system, computes the centroid, and then inversely projects it to longitude and latitude. This approach fails for polygons that include one of the poles (and is rather biased for anything close to the poles). The function should work for polygons that cross the -180/180 meridian (date line). 
+Compute the centroid of longitude/latitude polygons. Unlike other functions in this package, there is no spherical trigonometry involved in the implementation of this function. Instead, the function projects the polygon to the (conformal) Mercator coordinate reference system, computes the centroid, and then inversely projects it to longitude and latitude. This approach fails for polygons that include one of the poles (and is rather biased for anything close to the poles). The function should work for polygons that cross the -180/180 meridian (date line). 
 }
 
 \usage{
@@ -16,7 +16,7 @@ centroid(x, ...)
 }
 
 \arguments{
-\item{x}{a 2-column matrix (longitude/latitude)}
+\item{x}{SpatialPolygons* object, or a 2-column matrix or data.frame reprenting a single polgyon (longitude/latitude)}
 \item{...}{Additional arguments. None implemented}
 }
 

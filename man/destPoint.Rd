@@ -27,7 +27,7 @@ destPoint(p, b, d, a=6378137, f=1/298.257223563, ...)
 
 
 \note{
-Direction changes continuously when travelling along a geodesic. Therefore, the final direction is not the same as the initial direction. You can compute the final direction with \code{\link[geosphere]{finalBearing}} (see examples, below)
+Direction changes continuously when travelling along a geodesic. Therefore, the final direction is not the same as the initial direction. You can compute the final direction with \code{\link{finalBearing}} (see examples, below)
 }
 
 

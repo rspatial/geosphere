@@ -2,3 +2,5 @@
 .gitattributes
 LICENSE
 README.md
+^revdep$
+.travis.yml

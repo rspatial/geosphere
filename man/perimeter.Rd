@@ -36,7 +36,7 @@ Numeric. The perimeter or length in m.
 }
 
 \seealso{
-\code{ \link[geosphere]{areaPolygon}, \link[geosphere]{centroid}  }
+\code{ \link{areaPolygon}, \link[geosphere]{centroid}  }
 }
 
 

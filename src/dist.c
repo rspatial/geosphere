@@ -54,9 +54,10 @@ double distVinSph(double lon1, double lat1, double lon2, double lat2, double r) 
 	lat1 = toRad(lat1);
 	lat2 = toRad(lat2);
 
-	x1 = sqrt(cos(lat2) * sin(lon1-lon2));
-	x2 = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lon1-lon2);
-	x = x1*x1 + x2*x2;
+    x1 = cos(lat2) * sin(lon1-lon2);
+    x2 = cos(lat1) * sin(lat2) - sin(lat1) * cos(lat2) * cos(lon1-lon2);
+    x = sqrt(x1*x1 + x2*x2);
+	
 	y = sin(lat1) * sin(lat2) + cos(lat1) * cos(lat2) * cos(lon1-lon2);
 	
 	return r * atan2(x, y);
