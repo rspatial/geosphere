@@ -15,7 +15,7 @@ antipodal <- function(p1, p2, tol=1e-9) {
 #	(diflat < tol) & (diflon > (180 - tol))
 	## FIX by Jonathan Rynd
 #	(diflat < tol) & (abs(diflon%%360 - 180) < tol)
-	(diflat < tol) & (cos(p[,2]*3.14159/180)*abs(diflon%%360 - 180) < tol) 	
+	(diflat < tol) & (cos(p[,2] * pi/180) * abs(diflon%%360 - 180) < tol) 	
 }
 
 

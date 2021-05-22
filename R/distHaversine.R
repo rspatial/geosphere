@@ -74,6 +74,7 @@ distHaversine <- function(p1, p2, r=6378137) {
 }
 
 
+
 # from Thierry de Meeus
 .distHaversine3 <- function(p1, p2, r=6378137) {
 	toRad <- pi / 180 
