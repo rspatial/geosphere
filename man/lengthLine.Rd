@@ -25,7 +25,7 @@ length (in meters) for each line
 
 
 \seealso{
-For planar coordinates, see \code{\link[rgeos:misc-gLength]{gLength}}
+For planar coordinates, see the terra or sf packages
 }
 
 

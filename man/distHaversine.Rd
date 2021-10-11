@@ -34,9 +34,9 @@ Vector of distances in the same unit as \code{r} (default is meters)
 \references{
 Sinnott, R.W, 1984. Virtues of the Haversine. Sky and Telescope 68(2): 159
 
-\url{http://www.movable-type.co.uk/scripts/latlong.html}
+\url{https://www.movable-type.co.uk/scripts/latlong.html}
 
-\url{http://en.wikipedia.org/wiki/Great_circle_distance}
+\url{https://en.wikipedia.org/wiki/Great_circle_distance}
 }
 
 \author{

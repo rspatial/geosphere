@@ -35,7 +35,7 @@ Robert Hijmans
 }
 
 \references{
-C.F.F. Karney, 2013. Algorithms for geodesics, J. Geodesy 87: 43-55. \url{https://dx.doi.org/10.1007/s00190-012-0578-z}. Addenda: \url{http://geographiclib.sf.net/geod-addenda.html}. Also see \url{http://geographiclib.sourceforge.net/}
+C.F.F. Karney, 2013. Algorithms for geodesics, J. Geodesy 87: 43-55. \doi{10.1007/s00190-012-0578-z}. Addenda: \url{https://geographiclib.sourceforge.io/geod-addenda.html}. Also see \url{https://geographiclib.sourceforge.io/}
 }
 
 

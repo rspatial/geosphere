@@ -40,7 +40,7 @@ Parameters from the WGS84 ellipsoid are used by default. It is the best availabl
  \tab \code{ Krasovsky 1940     } \tab \code{ 6378245      } \tab \code{ 1/298.2997381   } \cr
 }
 
-more info: \url{http://en.wikipedia.org/wiki/Reference_ellipsoid}
+more info: \url{https://en.wikipedia.org/wiki/Reference_ellipsoid}
 				
 }
 

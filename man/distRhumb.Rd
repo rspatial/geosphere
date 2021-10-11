@@ -31,7 +31,7 @@ distance in units of r (default=meters)
 }
 
 \references{
-\url{http://www.movable-type.co.uk/scripts/latlong.html}
+\url{https://www.movable-type.co.uk/scripts/latlong.html}
 }
 
 \author{

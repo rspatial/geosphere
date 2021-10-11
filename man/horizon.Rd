@@ -22,7 +22,7 @@ Distance in units of \code{h} (default is meters)
 }
 
 \references{
-\url{http://www.edwilliams.org/avform.htm#Horizon}
+\url{https://www.edwilliams.org/avform.htm#Horizon}
 
 Bowditch, 1995. American Practical Navigator. Table 12.
 }

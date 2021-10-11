@@ -25,15 +25,15 @@ Maintainer: Robert J. Hijmans <r.hijmans@gmail.com>
 }
 
 \references{
-C.F.F. Karney, 2013. Algorithms for geodesics, J. Geodesy 87: 43-55. \url{https://dx.doi.org/10.1007/s00190-012-0578-z}. Addenda: \url{http://geographiclib.sf.net/geod-addenda.html}. Also see \url{http://geographiclib.sourceforge.net/}
+C.F.F. Karney, 2013. Algorithms for geodesics, J. Geodesy 87: 43-55. \doi{10.1007/s00190-012-0578-z}. Addenda: \url{https://geographiclib.sourceforge.io/geod-addenda.html}. Also see \url{https://geographiclib.sourceforge.io/}
 
-\url{http://www.edwilliams.org/avform.htm}
+\url{https://www.edwilliams.org/avform.htm}
 
-\url{http://www.movable-type.co.uk/scripts/latlong.html}
+\url{https://www.movable-type.co.uk/scripts/latlong.html}
 
-\url{http://en.wikipedia.org/wiki/Great_circle_distance}
+\url{https://en.wikipedia.org/wiki/Great_circle_distance}
 
-\url{http://mathworld.wolfram.com/SphericalTrigonometry.html}
+\url{https://mathworld.wolfram.com/SphericalTrigonometry.html}
 }
 
 \section{Acknowledgements}{

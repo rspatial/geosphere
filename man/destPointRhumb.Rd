@@ -27,11 +27,11 @@ Coordinates (longitude/latitude) of a point
 }
 
 \references{
-\url{http://www.edwilliams.org/avform.htm#Rhumb}
+\url{https://www.edwilliams.org/avform.htm#Rhumb}
 
-\url{http://www.movable-type.co.uk/scripts/latlong.html}
+\url{https://www.movable-type.co.uk/scripts/latlong.html}
 
-\url{http://en.wikipedia.org/wiki/Rhumb_line}
+\url{https://en.wikipedia.org/wiki/Rhumb_line}
 }
 
 \author{

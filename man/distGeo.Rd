@@ -44,7 +44,7 @@ Parameters from the WGS84 ellipsoid are used by default. It is the best availabl
  \tab \code{ Krasovsky 1940     } \tab \code{ 6378245      } \tab \code{ 1/298.2997381   } \cr
 }
 
-more info: \url{http://en.wikipedia.org/wiki/Reference_ellipsoid}		
+more info: \url{https://en.wikipedia.org/wiki/Reference_ellipsoid}		
 }
 
 
@@ -53,7 +53,7 @@ This function calls GeographicLib code by C.F.F. Karney
 }
 
 \references{
-C.F.F. Karney, 2013. Algorithms for geodesics, J. Geodesy 87: 43-55. \url{https://dx.doi.org/10.1007/s00190-012-0578-z}. Addenda: \url{http://geographiclib.sf.net/geod-addenda.html}. Also see \url{http://geographiclib.sourceforge.net/}
+C.F.F. Karney, 2013. Algorithms for geodesics, J. Geodesy 87: 43-55. \doi{10.1007/s00190-012-0578-z}. Addenda: \url{https://geographiclib.sourceforge.io/geod-addenda.html}. Also see \url{https://geographiclib.sourceforge.io/}
 }
 
 

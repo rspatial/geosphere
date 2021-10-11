@@ -23,7 +23,7 @@ function(x, a=6378137, f=1/298.257223563, ...) {
 		if (is.na(test)) {
 			warning('Coordinate reference system of SpatialPolygons object is not set. Assuming it is degrees (longitude/latitude)!') 
 		} else {
-			stop('The coordinate reference system is not longitude/latitude. Use rgeos::gArea instead')  
+			stop('The coordinate reference system is not longitude/latitude.')  
 		}
 		# or rather transform them ....?
 	}
@@ -82,7 +82,7 @@ function(x, a=6378137, f=1/298.257223563, ...) {
 	if (dif1 > 180) {
 		x2 <- x
 		x2[,1] <- x2[,1] %% 360 - 180
-		dif1 <- max(x[,1]) - min(x[,1])
+		#dif1 <- max(x[,1]) - min(x[,1])
 		dif2 <- max(x2[,1]) - min(x2[,1]) 
 		if (dif2 < dif1) {
 			x <- x2 

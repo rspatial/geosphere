@@ -44,7 +44,7 @@ The WGS84 ellipsoid is used by default. It is the best available global ellipsoi
 \code{a} is the 'semi-major axis', and \code{b} is the 'semi-minor axis' of the ellipsoid. \code{f} is the flattening.
 Note that \code{f = (a-b)/a}
 
-more info: \url{http://en.wikipedia.org/wiki/Reference_ellipsoid}
+more info: \url{https://en.wikipedia.org/wiki/Reference_ellipsoid}
 				
 }
 
@@ -57,9 +57,9 @@ Distance value in the same units as the ellipsoid (default is meters)
 Vincenty, T. 1975. Direct and inverse solutions of geodesics on the ellipsoid with application of nested equations. Survey Review Vol. 23, No. 176, pp88-93.
 Available here: 
 
-\url{http://www.movable-type.co.uk/scripts/latlong-vincenty.html}
+\url{https://www.movable-type.co.uk/scripts/latlong-vincenty.html}
 
-\url{http://en.wikipedia.org/wiki/Great_circle_distance}
+\url{https://en.wikipedia.org/wiki/Great_circle_distance}
 }
 
 \author{

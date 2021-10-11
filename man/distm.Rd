@@ -27,7 +27,7 @@ Matrix of distances
 }
 
 \references{
-\url{http://en.wikipedia.org/wiki/Great_circle_distance}
+\url{https://en.wikipedia.org/wiki/Great_circle_distance}
 }
 
 \author{

@@ -22,7 +22,7 @@ The shortest distance between points and polylines or polygons.
 
 
 \value{
-matrix with distance and lon/lat of the nearest point on the line. Distance is in the same unit as \code{r} in the \code{distfun}(default is meters). If \code{line} is a \code{Spatial*} object, the ID (index) of (one of) the nearest objects is also returned. Thus if the objects are polygons and the point is inside a polygon the function may return the ID of a neighboring polygon that shares the nearest border. You can use the \code{over} functions in packages \code{sp} or \code{rgeos} for point-in-polygon queries.
+matrix with distance and lon/lat of the nearest point on the line. Distance is in the same unit as \code{r} in the \code{distfun}(default is meters). If \code{line} is a \code{Spatial*} object, the ID (index) of (one of) the nearest objects is also returned. Thus if the objects are polygons and the point is inside a polygon the function may return the ID of a neighboring polygon that shares the nearest border. You can use the \code{intersect} function in packages \code{terra}.
 }
 
 \author{

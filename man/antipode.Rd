@@ -32,7 +32,7 @@ antipodal points or a logical value (\code{TRUE} if antipodal)
 }
 
 \references{
-\url{http://en.wikipedia.org/wiki/Antipodes}
+\url{https://en.wikipedia.org/wiki/Antipodes}
 }
 
 \author{ Robert Hijmans }
