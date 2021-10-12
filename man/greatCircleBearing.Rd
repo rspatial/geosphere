@@ -27,7 +27,7 @@ A matrix of points, or a list of matrices (e.g., if multiple bearings are suppli
 }
 
 \references{
-\url{https://www.edwilliams.org/avform.htm#Int}
+\url{https://www.edwilliams.org/avform147.htm#Int}
 }
 
 \author{

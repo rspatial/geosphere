@@ -27,7 +27,7 @@ A numeric (latitude)
 }
 
 \references{
-\url{https://www.edwilliams.org/avform.htm#Int}
+\url{https://www.edwilliams.org/avform147.htm#Int}
 }
 
 \author{

@@ -28,7 +28,7 @@ vector of two numbers (longitudes)
 }
 
 \references{
-\url{https://www.edwilliams.org/avform.htm#Intersection}
+\url{https://www.edwilliams.org/avform147.htm#Intersection}
 }
 
 \author{

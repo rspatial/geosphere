@@ -34,7 +34,7 @@ a matrix with four columns (two points)
 
 
 \references{
-\url{https://www.edwilliams.org/avform.htm#Intersection}
+\url{https://www.edwilliams.org/avform147.htm#Intersection}
 
 \url{https://www.movable-type.co.uk/scripts/latlong.html}
 }
