@@ -1,8 +1,16 @@
-#include    <R.h>
-#include	<stdio.h>
-#include	<stdlib.h>
-#include	<math.h>
-#include "Rmath.h"
+#include <math.h>
+
+#ifndef M_PI
+#define M_PI  (3.1415926535897932384626433)
+#endif
+
+#ifndef M_2PI
+#define M_2PI (3.1415926535897932384626433 * 2.0)
+#endif
+
+#ifndef M_PI_2 
+#define M_PI_2 (3.1415926535897932384626433 / 2)
+#endif
 
 
 

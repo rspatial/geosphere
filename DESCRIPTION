@@ -1,9 +1,10 @@
 Package: geosphere
 Type: Package
 Title: Spherical Trigonometry
-Version: 1.5-15
-Date: 2021-10-13
-Imports: sp
+Version: 1.5-16
+Date: 2021-12-24
+LinkingTo: Rcpp
+Imports: Rcpp, sp
 Depends: R (>= 3.0.0)
 Suggests: methods, raster
 Authors@R: c(

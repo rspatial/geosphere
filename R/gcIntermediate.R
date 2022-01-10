@@ -111,3 +111,38 @@ gcIntermediate <- function( p1, p2, n=50, breakAtDateLine=FALSE, addStartEnd=FAL
 }
 
 
+
+geodIntermediate <- function(p1, p2, n=50, breakAtDateLine=FALSE, addStartEnd=TRUE, sepNA=FALSE) {
+
+	p1 <- .pointsToMatrix(p1)
+	p2 <- .pointsToMatrix(p2)
+	p <- cbind(p1[,1], p1[,2], p2[,1], p2[,2], as.vector(n))
+	res <- list()
+
+	for (i in 1:nrow(p)) {
+		x <- .geod_intermediate(p[i,1], p[i,2], p[i,3], p[i,4], p[i,5], -1, TRUE, a, f)
+		x <- .interm(p[i,1:2,drop=FALSE], p[i,3:4,drop=FALSE], p[i,5])
+		if (!addStartEnd) {
+			x <- x[-c(1, nrow(x)), ,drop=FALSE]
+		}			
+		if (breakAtDateLine) {
+			res[[i]] <- .breakAtDateLine(x)
+		} else {
+			res[[i]] <- x
+		}
+	}
+	
+	if (nrow(p) == 1 ) {
+		res <- res[[1]]
+	} else if (sepNA) {
+		r <- res[[1]]
+		for (i in 2:length(res)) { 
+			r <- rbind(r, c(NA,NA), res[[i]]) 
+		}
+		return(r)
+	}
+	
+	return(res)
+}
+
+

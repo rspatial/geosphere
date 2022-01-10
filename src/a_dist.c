@@ -1,14 +1,7 @@
 /* Robert Hijmans, June 2011 */
 
-#include    <R.h>
-#include	<stdio.h>
-#include	<stdlib.h>
-#include	<math.h>
-#include "Rmath.h"
-#include "util.h"
-
-
-
+#include <math.h>
+#include "a_util.h"
 
 
 double distPlane(double x1, double y1, double x2, double y2) {
@@ -66,26 +59,22 @@ double distVinSph(double lon1, double lat1, double lon2, double lat2, double r) 
 
 
 double distVinEll(double lon1, double lat1, double lon2, double lat2, double a, double b, double f) {
-/*  Vincenty Inverse Solution of Geodesics on the Ellipsoid (c) Chris Veness 2002-2009           
+/*  
  Calculate geodesic distance (in m) between two points specified by latitude/longitude 
  (in numeric degrees) using Vincenty inverse formula for ellipsoids
- based on source http://www.movable-type.co.uk/scripts/latlong-vincenty.html (c) 2002-2009 Chris Veness
+ based on source http://www.movable-type.co.uk/scripts/latlong-vincenty.html by Chris Veness
 */
+
 	double L, U1, U2, sinU1, cosU1, sinU2, cosU2, lambda, sinLambda, cosLambda, sinSigma, 
 			cosSigma, sigma, sinAlpha, cosSqAlpha, cos2SigmaM, C, lambdaP, uSq, A, B, deltaSigma;
 			
 	int iterLimit, cont;
 
 	if ((lon1 == lon2) & (lat1 == lat2))  {
-
 		return 0.;
-		
 	} else if ( isnan(lon1) | isnan(lat1) | isnan(lon2) | isnan(lat2)) {
-	
-		return R_NaReal;
-		
+		return NAN;
 	} else {
-		
 		lon1 = toRad(lon1);
 		lon2 = toRad(lon2);
 		lat1 = toRad(lat1);
@@ -126,7 +115,7 @@ double distVinEll(double lon1, double lat1, double lon2, double lat2, double a, 
 		} 
 		
 		if (iterLimit==0) {
-			return R_NaReal;  // formula failed to converge
+			return NAN;  // formula failed to converge
 		} else {
 			uSq = cosSqAlpha * (a*a - b*b) / (b*b);
 			A = 1. + uSq/16384.*(4096.+uSq*(-768.+uSq*(320.-175.*uSq)));
@@ -139,9 +128,8 @@ double distVinEll(double lon1, double lat1, double lon2, double lat2, double a, 
 
 
 void distanceEllipsoid(int *n, double *lon1, double *lat1, double *lon2, double *lat2, double *a, double *b, double *f, int *m, double *dist) {
-	int i;
 	if (*m > 0) {
-		for(i=0; i < *n; i++) {
+		for(size_t i=0; i < *n; i++) {
 			dist[i] = distVinEll(lon1[i], lat1[i], lon2[i], lat2[i], a[i], b[i], f[i]);
 		}
 	}

@@ -63,7 +63,7 @@ function(x, a=6378137, f=1/298.257223563, ...) {
 		return( .old_perimeter(x, r=r) )
 	}
 
-	x <- .Call("_polygonarea", as.double(x[,1]), as.double(x[,2]), as.double(a), as.double(f), PACKAGE='geosphere')
+	x <- .inversegeodesic(as.double(x[,1]), as.double(x[,2]), as.double(a), as.double(f))
 	abs(x[2])
 })
 
