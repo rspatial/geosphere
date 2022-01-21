@@ -1,6 +1,7 @@
 /* Robert Hijmans, June 2011 */
 
 #include <math.h>
+#include <stdlib.h>
 #include "a_util.h"
 
 
