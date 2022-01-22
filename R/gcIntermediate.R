@@ -112,7 +112,9 @@ gcIntermediate <- function( p1, p2, n=50, breakAtDateLine=FALSE, addStartEnd=FAL
 
 
 
-geodIntermediate <- function(p1, p2, n=50, breakAtDateLine=FALSE, addStartEnd=TRUE, sepNA=FALSE) {
+.geodIntermediate <- function(p1, p2, n=50, breakAtDateLine=FALSE, addStartEnd=TRUE, sepNA=FALSE) {
+a=6378137
+f=1/298.257223563
 
 	p1 <- .pointsToMatrix(p1)
 	p2 <- .pointsToMatrix(p2)

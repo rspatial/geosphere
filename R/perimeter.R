@@ -59,12 +59,13 @@ function(x, a=6378137, f=1/298.257223563, ...) {
 	r <- list(...)$r
 	if (!is.null(r)) {
 		# for backwards compatibility
-		warning('remove argument "r" to use improved method')
+		warning('removed argument "r" to use improved method')
 		return( .old_perimeter(x, r=r) )
 	}
 
-	x <- .inversegeodesic(as.double(x[,1]), as.double(x[,2]), as.double(a), as.double(f))
-	abs(x[2])
+	n <- nrow(x)
+	d <- .inversegeodesic(as.double(x[-n,1]), as.double(x[-n,2]), as.double(x[-1,1]), as.double(x[-1,2]), as.double(a), as.double(f))
+	sum(abs(x))
 })
 
 
