@@ -5,7 +5,7 @@ status](https://www.r-pkg.org/badges/version/geosphere)](https://cran.r-project.
 [![CRAN RStudio mirror downloads](http://cranlogs.r-pkg.org/badges/geosphere)](http://www.r-pkg.org/pkg/geosphere)
 
 
-`geosphere` is an *R* package for sphereical computation. There are tutorials at [rspatial.org](https://rspatial.org/raster/sphere/index.html). 
+`geosphere` is an *R* package for spherical trigonmetry. That is compute distance, direction, area, and related quantities with longitude / latitude data. There are tutorials at [rspatial.org](https://rspatial.org/raster/sphere/index.html). 
 
 
 ## Installation
