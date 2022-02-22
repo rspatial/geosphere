@@ -25,8 +25,8 @@ alongTrackDistance <- function(p1, p2, p3, r=6378137) {
 
 # +1/-1 for ahead/behind [lat1,lon1]
 	bearing <- sign(cos(tc - tcp))  
-	dist <- bearing * acos(cos(dp) / cos(xtr)) * r
 	
+	dist <- bearing * acos(round(cos(dp) / cos(xtr), 15)) * r # Rounding one digit below machine eps
 	if (is.vector(dist)) { dist <- matrix(dist) }
 	colnames(dist) <- 'distance'
 	
