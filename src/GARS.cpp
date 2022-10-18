@@ -2,13 +2,18 @@
  * \file GARS.cpp
  * \brief Implementation for GeographicLib::GARS class
  *
- * Copyright (c) Charles Karney (2015-2020) <charles@karney.com> and licensed
+ * Copyright (c) Charles Karney (2015-2022) <charles@karney.com> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  **********************************************************************/
 
-#include "GARS.hpp"
-#include "Utility.hpp"
+#include "GARS.h"
+#include "Utility.h"
+
+#if defined(_MSC_VER)
+// Squelch warnings about enum-float expressions
+#  pragma warning (disable: 5055)
+#endif
 
 namespace GeographicLib {
 
@@ -19,16 +24,17 @@ namespace GeographicLib {
 
   void GARS::Forward(real lat, real lon, int prec, string& gars) {
     using std::isnan;           // Needed for Centos 7, ubuntu 14
-    if (abs(lat) > 90)
+    if (fabs(lat) > Math::qd)
       throw GeographicErr("Latitude " + Utility::str(lat)
-                          + "d not in [-90d, 90d]");
+                          + "d not in [-" + to_string(Math::qd)
+                          + "d, " + to_string(Math::qd) + "d]");
     if (isnan(lat) || isnan(lon)) {
       gars = "INVALID";
       return;
     }
     lon = Math::AngNormalize(lon);
-    if (lon == 180) lon = -180; // lon now in [-180,180)
-    if (lat == 90) lat *= (1 - numeric_limits<real>::epsilon() / 2);
+    if (lon == Math::hd) lon = -Math::hd; // lon now in [-180,180)
+    if (lat == Math::qd) lat *= (1 - numeric_limits<real>::epsilon() / 2);
     prec = max(0, min(int(maxprec_), prec));
     int
       x = int(floor(lon * m_)) - lonorig_ * m_,
@@ -78,7 +84,7 @@ namespace GeographicLib {
         throw GeographicErr("GARS must start with 3 digits " + gars);
       ilon = ilon * baselon_ + k;
     }
-    if (!(ilon >= 1 && ilon <= 720))
+    if (!(ilon >= 1 && ilon <= 2 * Math::td))
         throw GeographicErr("Initial digits in GARS must lie in [1, 720] " +
                             gars);
     --ilon;
@@ -89,7 +95,7 @@ namespace GeographicLib {
         throw GeographicErr("Illegal letters in GARS " + gars.substr(3,2));
       ilat = ilat * baselat_ + k;
     }
-    if (!(ilat < 360))
+    if (!(ilat < Math::td))
       throw  GeographicErr("GARS letters must lie in [AA, QZ] " + gars);
     real
       unit = mult1_,

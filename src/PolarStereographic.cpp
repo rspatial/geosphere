@@ -2,12 +2,17 @@
  * \file PolarStereographic.cpp
  * \brief Implementation for GeographicLib::PolarStereographic class
  *
- * Copyright (c) Charles Karney (2008-2020) <charles@karney.com> and licensed
+ * Copyright (c) Charles Karney (2008-2022) <charles@karney.com> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  **********************************************************************/
 
-#include "PolarStereographic.hpp"
+#include "PolarStereographic.h"
+
+#if defined(_MSC_VER)
+// Squelch warnings about enum-float expressions
+#  pragma warning (disable: 5055)
+#endif
 
 namespace GeographicLib {
 
@@ -17,7 +22,7 @@ namespace GeographicLib {
     : _a(a)
     , _f(f)
     , _e2(_f * (2 - _f))
-    , _es((_f < 0 ? -1 : 1) * sqrt(abs(_e2)))
+    , _es((_f < 0 ? -1 : 1) * sqrt(fabs(_e2)))
     , _e2m(1 - _e2)
     , _c( (1 - _f) * exp(Math::eatanhe(real(1), _es)) )
     , _k0(k0)
@@ -67,11 +72,11 @@ namespace GeographicLib {
       tau = Math::tand(lat),
       secphi = hypot(real(1), tau),
       taup = Math::taupf(tau, _es),
-      rho = hypot(real(1), taup) + abs(taup);
-    rho = taup >= 0 ? (lat != 90 ? 1/rho : 0) : rho;
+      rho = hypot(real(1), taup) + fabs(taup);
+    rho = taup >= 0 ? (lat != Math::qd ? 1/rho : 0) : rho;
     rho *= 2 * _k0 * _a / _c;
-    k = lat != 90 ? (rho / _a) * secphi * sqrt(_e2m + _e2 / Math::sq(secphi)) :
-      _k0;
+    k = lat != Math::qd ?
+      (rho / _a) * secphi * sqrt(_e2m + _e2 / Math::sq(secphi)) : _k0;
     Math::sincosd(lon, x, y);
     x *= rho;
     y *= (northp ? -rho : rho);
@@ -98,8 +103,9 @@ namespace GeographicLib {
   void PolarStereographic::SetScale(real lat, real k) {
     if (!(isfinite(k) && k > 0))
       throw GeographicErr("Scale is not positive");
-    if (!(-90 < lat && lat <= 90))
-      throw GeographicErr("Latitude must be in (-90d, 90d]");
+    if (!(-Math::qd < lat && lat <= Math::qd))
+      throw GeographicErr("Latitude must be in (-" + to_string(Math::qd)
+                          + "d, " + to_string(Math::qd) + "d]");
     real x, y, gamma, kold;
     _k0 = 1;
     Forward(true, lat, 0, x, y, gamma, kold);

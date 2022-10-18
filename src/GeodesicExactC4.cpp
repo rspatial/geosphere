@@ -12,7 +12,9 @@
  * http://connect.microsoft.com/VisualStudio/feedback/details/920594
  **********************************************************************/
 
-#include "GeodesicExact.hpp"
+/*
+
+#include "GeodesicExact.h"
 
 namespace GeographicLib {
 
@@ -7304,3 +7306,6 @@ namespace GeographicLib {
   }
 
 } // namespace GeographicLib
+
+
+*/

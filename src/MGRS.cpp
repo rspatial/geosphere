@@ -2,13 +2,18 @@
  * \file MGRS.cpp
  * \brief Implementation for GeographicLib::MGRS class
  *
- * Copyright (c) Charles Karney (2008-2021) <charles@karney.com> and licensed
+ * Copyright (c) Charles Karney (2008-2022) <charles@karney.com> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  **********************************************************************/
 
-#include "MGRS.hpp"
-#include "Utility.hpp"
+#include "MGRS.h"
+#include "Utility.h"
+
+#if defined(_MSC_VER)
+// Squelch warnings about enum-float expressions and mixing enums
+#  pragma warning (disable: 5055 5054)
+#endif
 
 namespace GeographicLib {
 
@@ -87,7 +92,7 @@ namespace GeographicLib {
     if (utmp) {
       int
         // Correct fuzziness in latitude near equator
-        iband = abs(lat) > angeps ? LatitudeBand(lat) : (northp ? 0 : -1),
+        iband = fabs(lat) < angeps ? (northp ? 0 : -1) : LatitudeBand(lat),
         icol = xh - minutmcol_,
         irow = UTMRow(iband, icol, yh % utmrowperiod_);
       if (irow != yh - (northp ? minutmNrow_ : maxutmSrow_))
@@ -132,7 +137,7 @@ namespace GeographicLib {
       // Here we do a more careful job using the band letter corresponding to
       // the actual latitude.
       ys /= tile_;
-      if (abs(ys) < 1)
+      if (fabs(ys) < 1)
         lat = real(0.9) * ys;         // accurate enough estimate near equator
       else {
         real
@@ -195,7 +200,7 @@ namespace GeographicLib {
     bool northp1 = iband >= (utmp ? 10 : 2);
     if (p == len) {             // Grid zone only (ignore centerp)
       // Approx length of a degree of meridian arc in units of tile.
-      real deg = real(utmNshift_) / (90 * tile_);
+      real deg = real(utmNshift_) / (Math::qd * tile_);
       zone = zone1;
       northp = northp1;
       if (utmp) {
@@ -349,7 +354,7 @@ namespace GeographicLib {
 
     // Estimate center row number for latitude band
     // 90 deg = 100 tiles; 1 band = 8 deg = 100*8/90 tiles
-    real c = 100 * (8 * iband + 4)/real(90);
+    real c = 100 * (8 * iband + 4) / real(Math::qd);
     bool northp = iband >= 0;
     // These are safe bounds on the rows
     //  iband minrow maxrow

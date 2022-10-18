@@ -2,13 +2,18 @@
  * \file Georef.cpp
  * \brief Implementation for GeographicLib::Georef class
  *
- * Copyright (c) Charles Karney (2015-2020) <charles@karney.com> and licensed
+ * Copyright (c) Charles Karney (2015-2022) <charles@karney.com> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  **********************************************************************/
 
-#include "Georef.hpp"
-#include "Utility.hpp"
+#include "Georef.h"
+#include "Utility.h"
+
+#if defined(_MSC_VER)
+// Squelch warnings about enum-float expressions
+#  pragma warning (disable: 5055)
+#endif
 
 namespace GeographicLib {
 
@@ -21,15 +26,16 @@ namespace GeographicLib {
 
   void Georef::Forward(real lat, real lon, int prec, string& georef) {
     using std::isnan;           // Needed for Centos 7, ubuntu 14
-    if (abs(lat) > 90)
+    if (fabs(lat) > Math::qd)
       throw GeographicErr("Latitude " + Utility::str(lat)
-                          + "d not in [-90d, 90d]");
+                          + "d not in [-" + to_string(Math::qd)
+                          + "d, " + to_string(Math::qd) + "d]");
     if (isnan(lat) || isnan(lon)) {
       georef = "INVALID";
       return;
     }
     lon = Math::AngNormalize(lon); // lon in [-180,180)
-    if (lat == 90) lat *= (1 - numeric_limits<real>::epsilon() / 2);
+    if (lat == Math::qd) lat *= (1 - numeric_limits<real>::epsilon() / 2);
     prec = max(-1, min(int(maxprec_), prec));
     if (prec == 1) ++prec;      // Disallow prec = 1
     // The C++ standard mandates 64 bits for long long.  But

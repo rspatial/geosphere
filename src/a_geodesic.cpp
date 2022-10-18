@@ -2,11 +2,11 @@
 #include "Rcpp.h"
 //#include "geodesic.h"
 #include <vector>
-#include "Geodesic.hpp"
+#include "Geodesic.h"
 
-#include "PolygonArea.hpp"
+#include "PolygonArea.h"
 //#include "Constants.hpp"
-#include "GeodesicLine.hpp"
+#include "GeodesicLine.h"
 
 
 //using namespace GeographicLib;

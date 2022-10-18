@@ -2,7 +2,7 @@
  * \file TransverseMercator.cpp
  * \brief Implementation for GeographicLib::TransverseMercator class
  *
- * Copyright (c) Charles Karney (2008-2020) <charles@karney.com> and licensed
+ * Copyright (c) Charles Karney (2008-2022) <charles@karney.com> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  *
@@ -35,7 +35,12 @@
  **********************************************************************/
 
 #include <complex>
-#include "TransverseMercator.hpp"
+#include "TransverseMercator.h"
+
+#if defined(_MSC_VER)
+// Squelch warnings about enum-float expressions
+#  pragma warning (disable: 5055)
+#endif
 
 namespace GeographicLib {
 
@@ -46,7 +51,7 @@ namespace GeographicLib {
     , _f(f)
     , _k0(k0)
     , _e2(_f * (2 - _f))
-    , _es((_f < 0 ? -1 : 1) * sqrt(abs(_e2)))
+    , _es((_f < 0 ? -1 : 1) * sqrt(fabs(_e2)))
     , _e2m(1 - _e2)
       // _c = sqrt( pow(1 + _e, 1 + _e) * pow(1 - _e, 1 - _e) ) )
       // See, for example, Lee (1976), p 100.
@@ -352,15 +357,15 @@ namespace GeographicLib {
     lon = Math::AngDiff(lon0, lon);
     // Explicitly enforce the parity
     int
-      latsign = (lat < 0) ? -1 : 1,
-      lonsign = (lon < 0) ? -1 : 1;
+      latsign = signbit(lat) ? -1 : 1,
+      lonsign = signbit(lon) ? -1 : 1;
     lon *= lonsign;
     lat *= latsign;
-    bool backside = lon > 90;
+    bool backside = lon > Math::qd;
     if (backside) {
       if (lat == 0)
         latsign = -1;
-      lon = 180 - lon;
+      lon = Math::hd - lon;
     }
     real sphi, cphi, slam, clam;
     Math::sincosd(lat, sphi, cphi);
@@ -383,7 +388,7 @@ namespace GeographicLib {
     //   cosh(etap) = 1/denom                  = 1/denom
     //   sinh(etap) = cos(phi')*sin(lam)/denom = sech(psi)*sin(lam)/denom
     real etap, xip;
-    if (lat != 90) {
+    if (lat != Math::qd) {
       real
         tau = sphi / cphi,
         taup = Math::taupf(tau, _es);
@@ -505,7 +510,7 @@ namespace GeographicLib {
     y = _a1 * _k0 * (backside ? Math::pi() - xi : xi) * latsign;
     x = _a1 * _k0 * eta * lonsign;
     if (backside)
-      gamma = 180 - gamma;
+      gamma = Math::hd - gamma;
     gamma *= latsign * lonsign;
     gamma = Math::AngNormalize(gamma);
     k *= _k0;
@@ -522,8 +527,8 @@ namespace GeographicLib {
       eta = x / (_a1 * _k0);
     // Explicitly enforce the parity
     int
-      xisign = (xi < 0) ? -1 : 1,
-      etasign = (eta < 0) ? -1 : 1;
+      xisign = signbit(xi) ? -1 : 1,
+      etasign = signbit(eta) ? -1 : 1;
     xi *= xisign;
     eta *= etasign;
     bool backside = xi > Math::pi()/2;
@@ -561,7 +566,7 @@ namespace GeographicLib {
     real
       xip = y1.real(), etap = y1.imag(),
       s = sinh(etap),
-      c = max(real(0), cos(xip)), // cos(pi/2) might be negative
+      c = fmax(real(0), cos(xip)), // cos(pi/2) might be negative
       r = hypot(s, c);
     if (r != 0) {
       lon = Math::atan2d(s, c); // Krueger p 17 (25)
@@ -575,17 +580,17 @@ namespace GeographicLib {
       k *= sqrt(_e2m + _e2 / (1 + Math::sq(tau))) *
         hypot(real(1), tau) * r;
     } else {
-      lat = 90;
+      lat = Math::qd;
       lon = 0;
       k *= _c;
     }
     lat *= xisign;
     if (backside)
-      lon = 180 - lon;
+      lon = Math::hd - lon;
     lon *= etasign;
     lon = Math::AngNormalize(lon + lon0);
     if (backside)
-      gamma = 180 - gamma;
+      gamma = Math::hd - gamma;
     gamma *= xisign * etasign;
     gamma = Math::AngNormalize(gamma);
     k *= _k0;
