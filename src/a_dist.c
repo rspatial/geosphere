@@ -104,7 +104,7 @@ double distVinEll(double lon1, double lat1, double lon2, double lat2, double a, 
 			cos2SigmaM = cosSigma - 2.*sinU1*sinU2/cosSqAlpha;
 			
 			if (isnan(cos2SigmaM)) {
-				cos2SigmaM = 0.;  // equatorial line: cosSqAlpha=0 (§6)
+				cos2SigmaM = 0.;  // equatorial line: cosSqAlpha=0 (par 6)
 			}
 				
 			C = f/16.*cosSqAlpha*(4.+f*(4.-3.*cosSqAlpha));
