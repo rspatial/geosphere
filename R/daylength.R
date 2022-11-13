@@ -5,7 +5,7 @@
 
 daylength <- function(lat, doy) {
 
-	if (class(doy) == 'Date' | class(doy) == 'character') { 
+	if (inherits(doy, "Date") || inherits(doy, "character")) { 
 		doy <- as.character(doy)
 		doy <- as.numeric(format(as.Date(doy), "%j"))
 	} else {
@@ -25,7 +25,7 @@ daylength <- function(lat, doy) {
 
 
 .daylength2 <- function(lat, doy) {
-	if (class(doy) == 'Date' | class(doy) == 'character') { 
+	if (inherits(doy, "Date") || inherits(doy, "character")) { 
 		doy <- as.character(doy)
 		doy <- as.numeric(format(as.Date(doy), "%j"))
 	} else {
