@@ -17,3 +17,13 @@ std::vector<std::string> osgb(std::vector<double> x, std::vector<double> y, int 
 	return out;
 }
  
+//[[Rcpp::export(name = ".OSGBinv")]]
+std::vector<double> osgb_rev(std::vector<std::string> g, int prec, bool centerp) {
+	size_t n = g.size();
+	std::vector<double> out(2 * n);
+	for (size_t i=0; i<g.size(); i++) {
+		GeographicLib::OSGB::GridReference(g[i], out[i], out[i+n], prec, centerp);
+	}
+	return out;
+}
+

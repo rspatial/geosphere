@@ -21,3 +21,7 @@
     .Call(`_geosphere_osgb`, x, y, prec)
 }
 
+.OSGBinv <- function(g, prec, centerp) {
+    .Call(`_geosphere_osgb_rev`, g, prec, centerp)
+}
+
