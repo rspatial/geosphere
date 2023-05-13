@@ -17,3 +17,7 @@
     .Call(`_geosphere_geodesic_nodes`, lon1, lat1, lon2, lat2, n, distance, arc, a, f)
 }
 
+.OSGB <- function(x, y, prec) {
+    .Call(`_geosphere_osgb`, x, y, prec)
+}
+

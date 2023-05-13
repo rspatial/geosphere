@@ -1,8 +1,8 @@
 Package: geosphere
 Type: Package
 Title: Spherical Trigonometry
-Version: 1.5-18
-Date: 2022-11-13
+Version: 1.5-19
+Date: 2023-05-13
 LinkingTo: Rcpp
 Imports: Rcpp, sp
 Depends: R (>= 3.0.0)

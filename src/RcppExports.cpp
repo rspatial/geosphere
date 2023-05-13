@@ -75,12 +75,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// osgb
+std::vector<std::string> osgb(std::vector<double> x, std::vector<double> y, int prec);
+RcppExport SEXP _geosphere_osgb(SEXP xSEXP, SEXP ySEXP, SEXP precSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::vector<double> >::type x(xSEXP);
+    Rcpp::traits::input_parameter< std::vector<double> >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type prec(precSEXP);
+    rcpp_result_gen = Rcpp::wrap(osgb(x, y, prec));
+    return rcpp_result_gen;
+END_RCPP
+}
 
 static const R_CallMethodDef CallEntries[] = {
     {"_geosphere_geodesic", (DL_FUNC) &_geosphere_geodesic, 6},
     {"_geosphere_inversegeodesic", (DL_FUNC) &_geosphere_inversegeodesic, 6},
     {"_geosphere_polygonarea", (DL_FUNC) &_geosphere_polygonarea, 4},
     {"_geosphere_geodesic_nodes", (DL_FUNC) &_geosphere_geodesic_nodes, 9},
+    {"_geosphere_osgb", (DL_FUNC) &_geosphere_osgb, 3},
     {NULL, NULL, 0}
 };
 
