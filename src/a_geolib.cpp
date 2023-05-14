@@ -19,6 +19,7 @@ std::vector<std::string> osgb(std::vector<double> x, std::vector<double> y, std:
     } else {
 		return std::vector<std::string>(0);
 	}
+	
 	bool fiver = false;
 	if (prec > 5) {
 		prec = prec - 6;
@@ -39,14 +40,18 @@ std::vector<std::string> osgb(std::vector<double> x, std::vector<double> y, std:
 	if (fiver) {
 		if (prec == 0) {
 			for (size_t i=0; i<x.size(); i++) {
-				out[i] = out[i].substr(0,1);
+				if (out[i] != "INVALID") {
+					out[i] = out[i].substr(0, 1);
+				}
 			}
 		} else {
 			size_t off = prec+1;
 			for (size_t i=0; i<x.size(); i++) {
-				std::string EW = out[i].substr(off, 1) < "5" ? "W" : "E";
-				std::string NS = out[i].substr(off+prec,1) < "5" ? "S" : "N";
-				out[i] = out[i].substr(0, off) + out[i].substr(off+1, prec-1) + NS + EW;
+				if (out[i] != "INVALID") {
+					std::string EW = out[i].substr(off, 1) < "5" ? "W" : "E";
+					std::string NS = out[i].substr(off+prec, 1) < "5" ? "S" : "N";
+					out[i] = out[i].substr(0, off) + out[i].substr(off+1, prec-1) + NS + EW;
+				}
 			}
 		}
 	}
