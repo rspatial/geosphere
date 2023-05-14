@@ -76,16 +76,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // osgb
-std::vector<std::string> osgb(std::vector<double> x, std::vector<double> y, int prec, bool geo);
-RcppExport SEXP _geosphere_osgb(SEXP xSEXP, SEXP ySEXP, SEXP precSEXP, SEXP geoSEXP) {
+std::vector<std::string> osgb(std::vector<double> x, std::vector<double> y, std::string p, bool geo);
+RcppExport SEXP _geosphere_osgb(SEXP xSEXP, SEXP ySEXP, SEXP pSEXP, SEXP geoSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::vector<double> >::type x(xSEXP);
     Rcpp::traits::input_parameter< std::vector<double> >::type y(ySEXP);
-    Rcpp::traits::input_parameter< int >::type prec(precSEXP);
+    Rcpp::traits::input_parameter< std::string >::type p(pSEXP);
     Rcpp::traits::input_parameter< bool >::type geo(geoSEXP);
-    rcpp_result_gen = Rcpp::wrap(osgb(x, y, prec, geo));
+    rcpp_result_gen = Rcpp::wrap(osgb(x, y, p, geo));
     return rcpp_result_gen;
 END_RCPP
 }

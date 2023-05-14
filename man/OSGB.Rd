@@ -17,7 +17,7 @@ OSGB(x, precision, geo=FALSE, inverse=FALSE)
 
 \arguments{
  \item{x}{x coordinate pairs (vector, matrix, data.frame}; or grid codes if \code{inverse=TRUE}.
- \item{precision}{number between 0 and 11. Level 0 refers to the 100 km grid, level 1 to the 10 km grid, level 2 to the 1 km grid, etc.} 
+ \item{precision}{character. One of "1m", "5m", "10m", "50m", "100m", "500m", "1km", "5km", "10km", "50km", "100km", "500km"} 
  \item{geo}{If \code{TRUE} the input coordinates are in longitude/latitude (on the airy ellipsoid!). If \code{FALSE} they must be in the "OSGB36 / British National Grid" coordinate reference system ("EPSG:27700" or "+proj=tmerc +lat_0=49 +lon_0=-2 +k=0.9996012717 +x_0=400000 +y_0=-100000 +ellps=airy +units=m")}
  \item{inverse}{If \code{TRUE}, coordinates are computed for the grid codes in \code{x}} 
 }
