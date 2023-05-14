@@ -8,7 +8,14 @@
 #include "Utility.h"
 
 //[[Rcpp::export(name = ".OSGB")]]
-std::vector<std::string> osgb(std::vector<double> x, std::vector<double> y, int prec) {
+std::vector<std::string> osgb(std::vector<double> x, std::vector<double> y, int prec, bool geo) {
+
+	if (geo) {
+		for (size_t i=0; i<x.size(); i++) {
+			GeographicLib::OSGB::Forward(y[i], x[i], x[i], y[i]);
+			Rcpp::Rcout << x[i] << ", " << y[i] << std::endl;
+		}		
+	}
 
 	std::vector<std::string> out(x.size());
 	for (size_t i=0; i<x.size(); i++) {

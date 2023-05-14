@@ -6,22 +6,30 @@
 
 
 .pointsToMatrix <- function(p, checkLonLat=TRUE, poly=FALSE) {
-	if (inherits(p, 'SpatialPoints')) {
+	if (inherits(p, 'SpatVector')) {
+		stopifnot(terra::geomtype(p) == "points")
+		test <- terra::is.lonlat(p)
+		if (! isTRUE (test) ) {
+			if (is.na(test)) {
+				warning('Coordinate reference system of SpatVector is not set. Assuming it is degrees (longitude/latitude)!')  			
+			} else if (checkLonLat) {
+				p <- project(p, "+proj=longlat")
+			}
+		}
+		p <- terra::crds(p)
+	} else if (inherits(p, 'SpatialPoints')) {
 		test <- !is.projected(p)
 		if (! isTRUE (test) ) {
 			if (is.na(test)) {
 				warning('Coordinate reference system of SpatialPoints object is not set. Assuming it is degrees (longitude/latitude)!')  			
-			} else {
+			} else if (checkLonLat) {
 				stop('Points are projected. They should be in degrees (longitude/latitude)')  
 			}
-			# or rather transform them ....?
 		}
 		p <- coordinates(p)
 	} else if (is.data.frame(p)) {
 		p <- as.matrix(p)
-	} else 
-	
-	if (is.vector(p)){
+	} else if (is.vector(p)){
 		if (length(p) != 2) {
 			stop('Wrong length for a vector, should be 2')
 		} else {
@@ -41,7 +49,7 @@
 			}
 		}		
 	} else {
-		stop('points should be vectors of length 2, matrices with 2 columns, or inheriting from a SpatialPoints* object')
+		stop('points should be vectors of length 2, matrices with 2 columns, or inheriting from a SpatialPoints or SpatVector object')
 	}
 
 	if (! is.numeric(p) ) { p[] <- as.numeric(p) }
