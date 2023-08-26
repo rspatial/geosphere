@@ -13,12 +13,12 @@
 			if (is.na(test)) {
 				warning('Coordinate reference system of SpatVector is not set. Assuming it is degrees (longitude/latitude)!')  			
 			} else if (checkLonLat) {
-				p <- project(p, "+proj=longlat")
+				p <- terra::project(p, "+proj=longlat")
 			}
 		}
 		p <- terra::crds(p)
 	} else if (inherits(p, 'SpatialPoints')) {
-		test <- !is.projected(p)
+		test <- !sp::is.projected(p)
 		if (! isTRUE (test) ) {
 			if (is.na(test)) {
 				warning('Coordinate reference system of SpatialPoints object is not set. Assuming it is degrees (longitude/latitude)!')  			
@@ -26,7 +26,7 @@
 				stop('Points are projected. They should be in degrees (longitude/latitude)')  
 			}
 		}
-		p <- coordinates(p)
+		p <- sp::coordinates(p)
 	} else if (is.data.frame(p)) {
 		p <- as.matrix(p)
 	} else if (is.vector(p)){
