@@ -66,7 +66,7 @@ std::vector<double> inversegeodesic(std::vector<double> lon1, std::vector<double
  
 //[[Rcpp::export(name = ".inversegeodesic")]]
 std::vector<double> inversegeodesic(std::vector<double> lon1, std::vector<double> lat1, std::vector<double> lon2, std::vector<double> lat2, double a, double f) {
-	const GeographicLib::Geodesic& geod = GeographicLib::Geodesic::WGS84();
+	GeographicLib::Geodesic geod(a, f);
 	size_t n = lat1.size();
 	std::vector<double> r(n * 3);
 	for (size_t i=0; i < n; i++) {
