@@ -7,6 +7,10 @@
  * https://geographiclib.sourceforge.io/
  **********************************************************************/
 
+#include <cmath>
+#include <limits> // std::numeric_limits
+#include <string> // std::to_string
+#include <utility> // std::swap
 #include "AlbersEqualArea.h"
 
 #if defined(_MSC_VER)
