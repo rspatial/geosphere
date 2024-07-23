@@ -7,6 +7,9 @@
  * https://geographiclib.sourceforge.io/
  **********************************************************************/
 
+#include <cmath>
+#include <limits> // std::numeric_limits
+#include <memory> // std::swap
 #include "EllipticFunction.h"
 
 #if defined(_MSC_VER)
