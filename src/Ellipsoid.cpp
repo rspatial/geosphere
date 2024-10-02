@@ -7,6 +7,8 @@
  * https://geographiclib.sourceforge.io/
  **********************************************************************/
 
+#include <cmath>
+#include <limits> // std::numeric_limits
 #include "Ellipsoid.h"
 
 #if defined(_MSC_VER)

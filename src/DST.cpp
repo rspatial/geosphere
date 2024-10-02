@@ -8,6 +8,10 @@
  **********************************************************************/
 
 #include "DST.h"
+#include <cmath> // std::exp
+#include <complex> // std::complex
+#include <functional> //std::function
+#include <memory> // std::make_shared
 #include <vector>
 
 #include "kissfft.h"
