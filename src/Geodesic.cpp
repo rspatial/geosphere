@@ -30,7 +30,7 @@
 #include <cmath>
 #include <limits> // std::numeric_limits
 #include <memory> // std::swap
-#include <__math/traits.h> // std::__math::isnan
+//#include <__math/traits.h> // std::__math::isnan
 #include "Geodesic.h"
 #include "GeodesicLine.h"
 
