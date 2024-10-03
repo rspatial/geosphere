@@ -1,7 +1,7 @@
 -- to do
 inconsistency reported by Ryan Case: bearing is expressed as -180 to 180 whereas bearingRhum is from 0 to 360
 
--- Current version
+-- 13 October 2021, version 1.5.14
 dist* functions threw an error when using a two row matrix  for p1, and missing p2. Fixed by setting "drop=FALSE". Bug report and fix by Miles Wood.
 
 -- 2 November 2018, version 1.5.7
