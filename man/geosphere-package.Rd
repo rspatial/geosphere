@@ -16,7 +16,7 @@ Geographic locations must be specified in latitude and longitude in degrees (NOT
 
 The default unit of distance is meter; but this can be adjusted by supplying a different radius \code{r} to functions.
 
-Directions are expressed in degrees (North = 0 and 360,  East = 90, Sout = 180, and West = 270 degrees).
+Directions are expressed in degrees (North = 0 and 360,  East = 90, South = 180, and West = 270 degrees).
 }
 
 \author{
