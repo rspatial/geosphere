@@ -64,8 +64,8 @@ function(x) {
 setMethod("centroid", signature(x='SpatialPolygons'), 
 function(x) {
 
-	if ( isTRUE(is.projected(x)) ) {
-		return( coordinates(x)) 
+	if ( isTRUE(sp::is.projected(x)) ) {
+		return( sp::coordinates(x)) 
 	}
 
 	x <- x@polygons

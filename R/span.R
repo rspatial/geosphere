@@ -11,6 +11,7 @@ if (!isGeneric("span")) {
 }	
 
 
+
 setMethod("span", signature(x='matrix'), 
 function(x, nbands='fixed', n=100, res=0.1, fun, r=6378137, ...) {
 
@@ -27,7 +28,7 @@ function(x, nbands='fixed', n=100, res=0.1, fun, r=6378137, ...) {
 		}
 	}
 	
-	x <- SpatialPolygons(list(Polygons(list(Polygon(x)), 1)))
+	x <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(x)), 1)))
 	if (missing(fun)) {
 		x <- span(x, nbands=nbands, n=n, res=res, ...) 
 	} else {	
@@ -44,7 +45,7 @@ function(x, nbands='fixed', n=100, res=0.1, fun, r=6378137, ...) {
 setMethod("span", signature(x='SpatialPolygons'), 
 function(x, nbands='fixed', n=100, res=0.1, fun, ...) {
 
-	if (!requireNamespace('raster')) {stop('you need to install the "raster" package to use this function')}
+	#if (!requireNamespace('raster')) {stop('you need to install the "raster" package to use this function')}
 	
 	if (! nbands %in% c('fixed', 'variable')) {
 		stop('bandwidth should be "fixed" or "variable"')

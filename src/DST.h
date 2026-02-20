@@ -2,8 +2,8 @@
  * \file DST.hpp
  * \brief Header for GeographicLib::DST class
  *
- * Copyright (c) Charles Karney (2022) <charles@karney.com> and licensed under
- * the MIT/X11 License.  For more information, see
+ * Copyright (c) Charles Karney (2022-2024) <karney@alum.mit.edu> and licensed
+ * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  **********************************************************************/
 
@@ -15,8 +15,10 @@
 #include <functional>
 #include <memory>
 
-template <typename scalar_t>
+/// \cond SKIP
+template<typename scalar_t>
 class kissfft;
+/// \endcond
 
 namespace GeographicLib {
 
@@ -56,12 +58,16 @@ namespace GeographicLib {
    * \note The FFTW package https://www.fftw.org/ can also be used.  However
    * this is a more complicated dependency, its CMake support is broken, and it
    * doesn't work with mpreals (GEOGRAPHICLIB_PRECISION = 5).
+   *
+   * \deprecated The functionality offered by this class is also provided by
+   *   the more general class Trigfun.  It is recommended to use Trigfun for
+   *   new applications.
    **********************************************************************/
 
   class DST {
   private:
     typedef Math::real real;
-    int _N;
+    int _nN;
     typedef kissfft<real> fft_t;
     std::shared_ptr<fft_t> _fft;
     // Implement DST-III (centerp = false) or DST-IV (centerp = true)
@@ -71,26 +77,30 @@ namespace GeographicLib {
   public:
     /**
      * Constructor specifying the number of points to use.
+     *
      * @param[in] N the number of points to use.
      **********************************************************************/
     GEOGRAPHICLIB_EXPORT DST(int N = 0);
 
     /**
      * Reset the given number of points.
+     *
      * @param[in] N the number of points to use.
      **********************************************************************/
     void GEOGRAPHICLIB_EXPORT reset(int N);
 
     /**
      * Return the number of points.
+     *
      * @return the number of points to use.
      **********************************************************************/
-    int N() const { return _N; }
+    int N() const { return _nN; }
 
     /**
      * Determine first \e N terms in the Fourier series
+     *
      * @param[in] f the function used for evaluation.
-     * @param[out] F  the first \e N coefficients of the Fourier series.
+     * @param[out] F the first \e N coefficients of the Fourier series.
      *
      * The evaluates \f$ f(\sigma) \f$ at \f$ \sigma = (j + 1) \pi / (2 N) \f$
      * for integer \f$ j \in [0, N) \f$.  \e F should be an array of length at
@@ -101,6 +111,7 @@ namespace GeographicLib {
 
     /**
      * Refine the Fourier series by doubling the number of points sampled
+     *
      * @param[in] f the function used for evaluation.
      * @param[inout] F on input the first \e N coefficents of the Fourier
      *   series; on output the refined transform based on 2\e N points, i.e.,
@@ -119,6 +130,7 @@ namespace GeographicLib {
 
     /**
      * Evaluate the Fourier sum given the sine and cosine of the angle
+     *
      * @param[in] sinx sin&sigma;.
      * @param[in] cosx cos&sigma;.
      * @param[in] F the array of Fourier coefficients.
@@ -131,6 +143,7 @@ namespace GeographicLib {
     /**
      * Evaluate the integral of Fourier sum given the sine and cosine of the
      * angle
+     *
      * @param[in] sinx sin&sigma;.
      * @param[in] cosx cos&sigma;.
      * @param[in] F the array of Fourier coefficients.
@@ -141,6 +154,25 @@ namespace GeographicLib {
      * \f$ \sigma = \frac12\pi \f$.
      **********************************************************************/
     static real GEOGRAPHICLIB_EXPORT integral(real sinx, real cosx,
+                                              const real F[], int N);
+
+    /**
+     * Evaluate the definite integral of Fourier sum given the sines and
+     * cosines of the angles at the endpoints.
+     *
+     * @param[in] sinx sin&sigma;<sub>1</sub>.
+     * @param[in] cosx cos&sigma;<sub>1</sub>.
+     * @param[in] siny sin&sigma;<sub>2</sub>.
+     * @param[in] cosy cos&sigma;<sub>2</sub>.
+     * @param[in] F the array of Fourier coefficients.
+     * @param[in] N the number of Fourier coefficients.
+     * @return the value of the integral.
+     *
+     * The integral is evaluated between limits &sigma;<sub>1</sub> and
+     * &sigma;<sub>2</sub>.
+     **********************************************************************/
+    static real GEOGRAPHICLIB_EXPORT integral(real sinx, real cosx,
+                                              real siny, real cosy,
                                               const real F[], int N);
   };
 

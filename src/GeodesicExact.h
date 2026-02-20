@@ -2,7 +2,7 @@
  * \file GeodesicExact.hpp
  * \brief Header for GeographicLib::GeodesicExact class
  *
- * Copyright (c) Charles Karney (2012-2022) <charles@karney.com> and licensed
+ * Copyright (c) Charles Karney (2012-2024) <karney@alum.mit.edu> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  **********************************************************************/
@@ -13,12 +13,12 @@
 #include "Constants.h"
 #include "EllipticFunction.h"
 #include "DST.h"
-#include <vector>
 
 namespace GeographicLib {
 
-  class GEOGRAPHICLIB_EXPORT DST;
   class GeodesicLineExact;
+  // Visual Studio needs this forward declaration...
+  class GEOGRAPHICLIB_EXPORT DST;
 
   /**
    * \brief Exact geodesic calculations
@@ -27,7 +27,7 @@ namespace GeographicLib {
    * incomplete elliptic integrals.  The Geodesic class expands these integrals
    * in a series in the flattening \e f and this provides an accurate solution
    * for \e f &isin; [-0.01, 0.01].  The GeodesicExact class computes the
-   * ellitpic integrals directly and so provides a solution which is valid for
+   * elliptic integrals directly and so provides a solution which is valid for
    * all \e f.  However, in practice, its use should be limited to about
    * <i>b</i>/\e a &isin; [0.01, 100] or \e f &isin; [&minus;99, 0.99].
    *
@@ -63,8 +63,19 @@ namespace GeographicLib {
    * spaced points in &sigma;.  \e N chosen to ensure full accuracy for
    * <i>b</i>/\e a &isin; [0.01, 100] or \e f &isin; [&minus;99, 0.99].
    *
+   * The algorithms are described in
+   * - C. F. F. Karney,
+   *   <a href="https://doi.org/10.1007/s00190-023-01813-2">
+   *   Geodesics on an arbitrary ellipsoid of revolution</a>,
+   *   J. Geodesy <b>98</b>, 4:1--14 (2024);
+   *   DOI: <a href="https://doi.org/10.1007/s00190-023-01813-2">
+   *   10.1007/s00190-023-01813-2</a>.
+   * .
    * See \ref geodellip for the formulation.  See the documentation on the
    * Geodesic class for additional information on the geodesic problems.
+   *
+   * \note Instead of using this class directly, it is recommended to use the
+   *   Geodesic class, specifying \e exact = true in the constructor.
    *
    * Example of use:
    * \include example-GeodesicExact.cpp
@@ -78,22 +89,24 @@ namespace GeographicLib {
   private:
     typedef Math::real real;
     friend class GeodesicLineExact;
+    friend class Geodesic;    // Allow Geodesic to call the default constructor
+    // Private default constructor to support Geodesic(a, f, exact)
+    GeodesicExact() {};         // Do nothing; used with exact = false.
+
     static const unsigned maxit1_ = 20;
     unsigned maxit2_;
     real tiny_, tol0_, tol1_, tol2_, tolb_, xthresh_;
 
-    enum captype {
-      CAP_NONE = 0U,
-      CAP_E    = 1U<<0,
-      // Skip 1U<<1 for compatibility with Geodesic (not required)
-      CAP_D    = 1U<<2,
-      CAP_H    = 1U<<3,
-      CAP_C4   = 1U<<4,
-      CAP_ALL  = 0x1FU,
-      CAP_MASK = CAP_ALL,
-      OUT_ALL  = 0x7F80U,
-      OUT_MASK = 0xFF80U,       // Includes LONG_UNROLL
-    };
+    static constexpr unsigned CAP_NONE = 0U;
+    static constexpr unsigned CAP_E    = 1U<<0;
+    // Skip 1U<<1 for compatibility with Geodesic (not required)
+    static constexpr unsigned CAP_D    = 1U<<2;
+    static constexpr unsigned CAP_H    = 1U<<3;
+    static constexpr unsigned CAP_C4   = 1U<<4;
+    static constexpr unsigned CAP_ALL  = 0x1FU;
+    static constexpr unsigned CAP_MASK = CAP_ALL;
+    static constexpr unsigned OUT_ALL  = 0x7F80U;
+    static constexpr unsigned OUT_MASK = 0xFF80U;       // Includes LONG_UNROLL
 
     static real Astroid(real x, real y);
 
@@ -690,6 +703,11 @@ namespace GeographicLib {
     /** \name Interface to GeodesicLineExact.
      **********************************************************************/
     ///@{
+
+    /**
+     * Typedef for the class for computing multiple points on a geodesic.
+     **********************************************************************/
+    typedef GeodesicLineExact LineClass;
 
     /**
      * Set up to compute several points on a single geodesic.

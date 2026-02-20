@@ -6,10 +6,10 @@
 
 lengthLine <- function(line) {
 
-	if (inherits(line, 'SpatialPolygons')) {
+	if (inherits(line, 'sp::SpatialPolygons')) {
 		requireNamespace('raster')
-		line <- raster::geom(methods::as(line, 'SpatialLines'))
-	} else if (inherits(line, 'SpatialLines')) {
+		line <- raster::geom(methods::as(line, 'sp::SpatialLines'))
+	} else if (inherits(line, 'sp::SpatialLines')) {
 		requireNamespace('raster')
 		line <- raster::geom(line)
 	} else {

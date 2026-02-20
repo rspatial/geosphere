@@ -37,7 +37,7 @@
 plotArrows <- function(p, fraction=0.9, length=0.15, first='', add=FALSE, ...) {
 	asp=1
 	if (inherits(p, 'Spatial')) {
-		bb = t(bbox(p))
+		bb = t(sp::bbox(p))
 		interval = distm(bb)[2][1] / 1000
 		if (! add) { plot(bb, asp=asp, type='n') }
 		p = p@polygons

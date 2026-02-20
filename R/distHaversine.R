@@ -34,7 +34,7 @@ distHaversine <- function(p1, p2, r=6378137) {
 	a <- (sin(dLat/2))^2 + cos(p[,2]) * cos(p[,4]) * (sin(dLon/2))^2
 	# to avoid values of 'a' that are a sliver above 1
 	# which may occur at antipodes
-	# https://stackoverflow.com/questions/45889616/why-does-disthaversine-return-nan-for-some-pairs-of-coordinates#
+	# https://stackoverflow.com/questions/45889616/why-does-disthaversine-return-nan-for-some-pairs-of-sp::coordinates#
 	a <- pmin(a, 1)
 	dist <- 2 * atan2(sqrt(a), sqrt(1-a)) * p[,5]
 	return( as.vector(dist))

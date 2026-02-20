@@ -2,7 +2,7 @@
  * \file Math.hpp
  * \brief Header for GeographicLib::Math class
  *
- * Copyright (c) Charles Karney (2008-2022) <charles@karney.com> and licensed
+ * Copyright (c) Charles Karney (2008-2024) <karney@alum.mit.edu> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  **********************************************************************/
@@ -40,25 +40,31 @@
 #include <limits>
 
 #if GEOGRAPHICLIB_PRECISION == 4
-#include <boost/version.hpp>
-#include <boost/multiprecision/float128.hpp>
-#include <boost/math/special_functions.hpp>
-#elif GEOGRAPHICLIB_PRECISION == 5
-#include <mpreal.h>
+#  include <memory>
+#  include <boost/version.h>
+#  include <boost/multiprecision/float128.h>
+#  include <boost/math/special_functions.h>
+#elif GEOGRAPHICLIB_PRECISION >= 5
+#  if GEOGRAPHICLIB_PRECISION > 5
+#    define MPREAL_FIXED_PRECISION GEOGRAPHICLIB_PRECISION
+#  else
+#    define MPREAL_FIXED_PRECISION 0
+#  endif
+#  include <mpreal.h>
 #endif
 
 #if GEOGRAPHICLIB_PRECISION > 3
 // volatile keyword makes no sense for multiprec types
-#define GEOGRAPHICLIB_VOLATILE
+#  define GEOGRAPHICLIB_VOLATILE
 // Signal a convergence failure with multiprec types by throwing an exception
 // at loop exit.
-#define GEOGRAPHICLIB_PANIC \
-  (throw GeographicLib::GeographicErr("Convergence failure"), false)
+#  define GEOGRAPHICLIB_PANIC(msg) \
+    (throw GeographicLib::GeographicErr(msg), false)
 #else
-#define GEOGRAPHICLIB_VOLATILE volatile
+#  define GEOGRAPHICLIB_VOLATILE volatile
 // Ignore convergence failures with standard floating points types by allowing
 // loop to exit cleanly.
-#define GEOGRAPHICLIB_PANIC false
+#  define GEOGRAPHICLIB_PANIC(msg) false
 #endif
 
 namespace GeographicLib {
@@ -103,7 +109,7 @@ namespace GeographicLib {
     typedef extended real;
 #elif GEOGRAPHICLIB_PRECISION == 4
     typedef boost::multiprecision::float128 real;
-#elif GEOGRAPHICLIB_PRECISION == 5
+#elif GEOGRAPHICLIB_PRECISION >= 5
     typedef mpfr::mpreal real;
 #else
     typedef double real;
@@ -133,22 +139,12 @@ namespace GeographicLib {
      * break most of the tests.  Also the normal definition of degree is baked
      * into some classes, e.g., UTMUPS, MGRS, Georef, Geohash, etc.
      **********************************************************************/
-#if GEOGRAPHICLIB_PRECISION == 4
-    static const int
-#else
-    enum dms {
-#endif
-      qd = 90,                  ///< degrees per quarter turn
-      dm = 60,                  ///< minutes per degree
-      ms = 60,                  ///< seconds per minute
-      hd = 2 * qd,              ///< degrees per half turn
-      td = 2 * hd,              ///< degrees per turn
-      ds = dm * ms              ///< seconds per degree
-#if GEOGRAPHICLIB_PRECISION == 4
-      ;
-#else
-    };
-#endif
+    static inline constexpr int qd = 90;      ///< degrees per quarter turn
+    static inline constexpr int dm = 60;      ///< minutes per degree
+    static inline constexpr int ms = 60;      ///< seconds per minute
+    static inline constexpr int hd = 2 * qd;  ///< degrees per half turn
+    static inline constexpr int td = 2 * hd;  ///< degrees per turn
+    static inline constexpr int ds = dm * ms; ///< seconds per degree
 
     /**
      * @return the number of bits of precision in a real number.
@@ -161,9 +157,10 @@ namespace GeographicLib {
      * @param[in] ndigits the number of bits of precision.
      * @return the resulting number of bits of precision.
      *
-     * This only has an effect when GEOGRAPHICLIB_PRECISION = 5.  See also
+     * This only has an effect when GEOGRAPHICLIB_PRECISION >= 5.  See also
      * Utility::set_digits for caveats about when this routine should be
-     * called.
+     * called.  If GEOGRAPHICLIB_PRECISION > 5, the precision is set to the
+     * compile-time value of GEOGRAPHICLIB_PRECISION and \e ndigits is ignored.
      **********************************************************************/
     static int set_digits(int ndigits);
 
@@ -220,7 +217,7 @@ namespace GeographicLib {
      * @param[in,out] y on output set to <i>y</i>/hypot(<i>x</i>, <i>y</i>).
      **********************************************************************/
     template<typename T> static void norm(T& x, T& y) {
-#if defined(_MSC_VER) && defined(_M_IX86)
+#if defined(_MSC_VER) && _MSC_VER < 1950 && defined(_M_IX86)
       // hypot for Visual Studio (A=win32) fails monotonicity, e.g., with
       //   x  = 0.6102683302836215
       //   y1 = 0.7906090004346522
@@ -231,6 +228,8 @@ namespace GeographicLib {
       //   https://developercommunity.visualstudio.com/t/1369259
       // See also:
       //   https://bugs.python.org/issue43088
+      // Bug still present in my version of vc17 (2022) updated on 2025-09-01.
+      // Let's hope it's fixed in vc18.
       using std::sqrt; T h = sqrt(x * x + y * y);
 #else
       using std::hypot; T h = hypot(x, y);
@@ -272,9 +271,13 @@ namespace GeographicLib {
       // This used to employ Math::fma; but that's too slow and it seemed not
       // to improve the accuracy noticeably.  This might change when there's
       // direct hardware support for fma.
-      T y = N < 0 ? 0 : *p++;
-      while (--N >= 0) y = y * x + *p++;
-      return y;
+      T z = N < 0 ? 0 : *p++;
+      while (--N >= 0) z = z * x + *p++;
+      // To compute z = p(x) and dz = (p(y)-p(x))/(y-x) at the same time
+      // See Kahan + Fateman Sec 2.3.  If y = x, dz = p'(x)
+      //      T z = N < 0 ? 0 : *p++, dz = 0;
+      //      while (--N >= 0) { dz = dz * y + p; z = z * x + *p++; }
+      return z;
     }
 
     /**
@@ -437,7 +440,7 @@ namespace GeographicLib {
      * @param[in] x
      * @return atan(<i>x</i>) in degrees.
      **********************************************************************/
-   template<typename T> static T atand(T x);
+    template<typename T> static T atand(T x);
 
     /**
      * Evaluate <i>e</i> atanh(<i>e x</i>)
@@ -490,6 +493,33 @@ namespace GeographicLib {
      * <a href="https://arxiv.org/abs/1002.1417">arXiv:1002.1417</a>).
      **********************************************************************/
     template<typename T> static T tauf(T taup, T es);
+
+    /**
+     * Implement hypot with 3 parameters
+     *
+     * @tparam T the type of the argument and the returned value.
+     * @param[in] x
+     * @param[in] y
+     * @param[in] z
+     * @return sqrt(<i>x</i><sup>2</sup> + <i>y</i><sup>2</sup> +
+     *   <i>z</i><sup>2</sup>).
+     **********************************************************************/
+    template<typename T> static T hypot3(T x, T y, T z);
+
+    /**
+     * Implement work-alike to C++17 clamp function
+     *
+     * @tparam T the type of the argument and the returned value.
+     * @param[in] x
+     * @param[in] a
+     * @param[in] b
+     * @return \e x if it lies in [<i>a</i>, <i>b</i>]; otherise return the
+     *   nearest boundary value.
+     *
+     * Requires \e a &le; \e b.  Unlike std::clamp, \e x can be a NaN (and
+     * this is then returned).
+     **********************************************************************/
+    template<typename T> static T clamp(T x, T a, T b);
 
     /**
      * The NaN (not a number)

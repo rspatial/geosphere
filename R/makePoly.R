@@ -47,11 +47,11 @@
  
  
 makePoly <- function(p, interval=10000, sp=FALSE, ...) {
-	if (inherits(p, 'SpatialPolygons')) {
-		test <- !is.projected(p)
+	if (inherits(p, 'sp::SpatialPolygons')) {
+		test <- !sp::is.projected(p)
 		if (! isTRUE (test) ) {
 			if (is.na(test)) {
-				warning('Coordinate reference system of SpatialPolygons object is not set. Assuming it is degrees (longitude/latitude)!')  			
+				warning('Coordinate reference system of sp::SpatialPolygons object is not set. Assuming it is degrees (longitude/latitude)!')  			
 			} else {
 				stop('Points are projected. They should be in degrees (longitude/latitude)')  
 			}
@@ -67,14 +67,14 @@ makePoly <- function(p, interval=10000, sp=FALSE, ...) {
 			for (j in 1:parts) {
 				crd <- x[[i]]@Polygons[[j]]@coords
 				crd <- .makeSinglePoly(crd, interval=interval, ...)
-				partlist[[j]] <- Polygon(crd)
+				partlist[[j]] <- sp::Polygons(crd)
 			}
-			polys[[i]] <- Polygons(partlist, i)
+			polys[[i]] <- sp::Polygons(partlist, i)
 		}
-		polys <- SpatialPolygons(polys)
-		if (inherits(p, 'SpatialPolygonsDataFrame')) {
+		polys <- sp::SpatialPolygons(polys)
+		if (inherits(p, 'sp::SpatialPolygonsDataFrame')) {
 			rownames(p@data) <- 1:nrow(p@data)
-			polys <- SpatialPolygonsDataFrame(polys, p@data)	
+			polys <- sp::SpatialPolygonsDataFrame(polys, p@data)	
 		}
 		polys@proj4string <- p@proj4string
 		return(polys)
@@ -88,8 +88,8 @@ makePoly <- function(p, interval=10000, sp=FALSE, ...) {
 		}
 		res <- .makeSinglePoly(p, interval=interval, ...) 
 		if (sp) {
-			res <- SpatialPolygons(list(Polygons(list(Polygon(res)), 1)))
-			res@proj4string <- CRS("+proj=longlat +datum=WGS84")
+			res <- sp::SpatialPolygons(list(sp::Polygons(list(sp::Polygon(res)), 1)))
+			res@proj4string <- sp::CRS("+proj=longlat +datum=WGS84")
 		}
 		return(res)
 	}
@@ -98,11 +98,11 @@ makePoly <- function(p, interval=10000, sp=FALSE, ...) {
 
 
 makeLine <- function(p, interval=10000, sp=FALSE, ...) {
-	if (inherits(p, 'SpatialLines')) {
-		test <- !is.projected(p)
+	if (inherits(p, 'sp::SpatialLines')) {
+		test <- !sp::is.projected(p)
 		if (! isTRUE (test) ) {
 			if (is.na(test)) {
-				warning('Coordinate reference system of SpatialPolygons object is not set. Assuming it is degrees (longitude/latitude)!')  			
+				warning('Coordinate reference system of sp::SpatialPolygons object is not set. Assuming it is degrees (longitude/latitude)!')  			
 			} else {
 				stop('Points are projected. They should be in degrees (longitude/latitude)')  
 			}
@@ -119,13 +119,13 @@ makeLine <- function(p, interval=10000, sp=FALSE, ...) {
 			for (j in 1:parts) {
 				crd = x[[i]]@Lines[[j]]@coords
 				crd = .makeSingleLine(crd, interval=interval, ...)
-				partlist[[j]] = Line(crd)
+				partlist[[j]] = sp::Line(crd)
 			}
-			lines[[i]] = Lines(partlist, i)
+			lines[[i]] = sp::Lines(partlist, i)
 		}
-		lines <- SpatialLines(lines)
-		if (inherits(p, 'SpatialLinesDataFrame')) {
-			lines <- SpatialLinesDataFrame(lines, p@data)	
+		lines <- sp::SpatialLines(lines)
+		if (inherits(p, 'sp::SpatialLinesDataFrame')) {
+			lines <- sp::SpatialLinesDataFrame(lines, p@data)	
 		}
 		lines@proj4string <- p@proj4string
 		return(lines)
@@ -136,8 +136,8 @@ makeLine <- function(p, interval=10000, sp=FALSE, ...) {
 		}
 		res <- .makeSingleLine(p, interval=interval, ...) 
 		if (sp) {
-			res <- SpatialLines(list(Lines(list(Line(res)), 1)))
-			res@proj4string <- CRS("+proj=longlat +datum=WGS84")
+			res <- sp::SpatialLines(list(sp::Lines(list(sp::Line(res)), 1)))
+			res@proj4string <- sp::CRS("+proj=longlat +datum=WGS84")
 		}
 		return(res)
 	}

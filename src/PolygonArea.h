@@ -2,7 +2,7 @@
  * \file PolygonArea.hpp
  * \brief Header for GeographicLib::PolygonAreaT class
  *
- * Copyright (c) Charles Karney (2010-2022) <charles@karney.com> and licensed
+ * Copyright (c) Charles Karney (2010-2023) <karney@alum.mit.edu> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  **********************************************************************/
@@ -93,7 +93,7 @@ namespace GeographicLib {
    * providing access to the functionality of PolygonAreaT.
    **********************************************************************/
 
-  template <class GeodType = Geodesic>
+  template<class GeodType = Geodesic>
   class PolygonAreaT {
   private:
     typedef Math::real real;
@@ -114,7 +114,7 @@ namespace GeographicLib {
       using std::remainder;
       a = remainder(a, _area0);
     }
-    template <typename T>
+    template<typename T>
     void AreaReduce(T& area, int crossings, bool reverse, bool sign) const;
   public:
 
@@ -169,7 +169,7 @@ namespace GeographicLib {
     /**
      * Return the results so far.
      *
-     * @param[in] reverse if true then clockwise (instead of counter-clockwise)
+     * @param[in] reverse if true then clockwise (instead of counterclockwise)
      *   traversal counts as a positive area.
      * @param[in] sign if true then return a signed result for the area if
      *   the polygon is traversed in the "wrong" direction instead of returning
@@ -196,7 +196,7 @@ namespace GeographicLib {
      *
      * @param[in] lat the latitude of the test point (degrees).
      * @param[in] lon the longitude of the test point (degrees).
-     * @param[in] reverse if true then clockwise (instead of counter-clockwise)
+     * @param[in] reverse if true then clockwise (instead of counterclockwise)
      *   traversal counts as a positive area.
      * @param[in] sign if true then return a signed result for the area if
      *   the polygon is traversed in the "wrong" direction instead of returning
@@ -224,7 +224,7 @@ namespace GeographicLib {
      *
      * @param[in] azi azimuth at current point (degrees).
      * @param[in] s distance from current point to final test point (meters).
-     * @param[in] reverse if true then clockwise (instead of counter-clockwise)
+     * @param[in] reverse if true then clockwise (instead of counterclockwise)
      *   traversal counts as a positive area.
      * @param[in] sign if true then return a signed result for the area if
      *   the polygon is traversed in the "wrong" direction instead of returning
@@ -296,9 +296,10 @@ namespace GeographicLib {
   /**
    * @relates PolygonAreaT
    *
-   * Polygon areas using GeodesicExact.  (But note that the implementation of
-   * areas in GeodesicExact uses a high order series and this is only accurate
-   * for modest flattenings.)
+   * Polygon areas using GeodesicExact.
+   *
+   * \deprecated Instead of using PolygonAreaExact, use PolygonArea
+   *   with a Geodesic object constructed with \e exact = true.
    **********************************************************************/
   typedef PolygonAreaT<GeodesicExact> PolygonAreaExact;
 

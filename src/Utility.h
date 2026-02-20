@@ -2,7 +2,7 @@
  * \file Utility.hpp
  * \brief Header for GeographicLib::Utility class
  *
- * Copyright (c) Charles Karney (2011-2022) <charles@karney.com> and licensed
+ * Copyright (c) Charles Karney (2011-2024) <karney@alum.mit.edu> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  **********************************************************************/
@@ -19,9 +19,9 @@
 #include <cstring>
 
 #if defined(_MSC_VER)
-// Squelch warnings about constant conditional expressions and unsafe gmtime
+// Squelch warnings about constant conditional expressions
 #  pragma warning (push)
-#  pragma warning (disable: 4127 4996)
+#  pragma warning (disable: 4127)
 #endif
 
 namespace GeographicLib {
@@ -316,11 +316,23 @@ namespace GeographicLib {
      * @param[out] array the output array of type IntT (internal).
      * @param[in] num the size of the array.
      * @exception GeographicErr if the data cannot be read.
+     *
+     * This routine is used to read binary data files for the Geoid,
+     * GravityModel, and MagneticModel classes.  In the case of GravityModel
+     * and MagneticMode, the data is published by a government agency as text
+     * files, and the coefficient to realize the models are converted to a
+     * double precision binary format to minimize storage and to simplify
+     * reading the data.
+     *
+     * For GEOGRAPHIC_PRECISION == 2, the data is read faithfully.  For
+     * GEOGRAPHICLIB_PRECISION > 2, external data of type double is interpreted
+     * as an approximation of an exact decimal value; this exact number is
+     * convered to a real number at the higher precision.
      **********************************************************************/
     template<typename ExtT, typename IntT, bool bigendp>
       static void readarray(std::istream& str, IntT array[], size_t num) {
 #if GEOGRAPHICLIB_PRECISION < 4
-      if (sizeof(IntT) == sizeof(ExtT) &&
+      if constexpr (sizeof(IntT) == sizeof(ExtT) &&
           std::numeric_limits<IntT>::is_integer ==
           std::numeric_limits<ExtT>::is_integer)
         {
@@ -328,7 +340,8 @@ namespace GeographicLib {
           str.read(reinterpret_cast<char*>(array), num * sizeof(ExtT));
           if (!str.good())
             throw GeographicErr("Failure reading data");
-          if (bigendp != Math::bigendian) { // endian mismatch -> swap bytes
+          if constexpr (bigendp != Math::bigendian) {
+            // endian mismatch -> swap bytes
             for (size_t i = num; i--;)
               array[i] = Math::swab<IntT>(array[i]);
           }
@@ -345,10 +358,74 @@ namespace GeographicLib {
             str.read(reinterpret_cast<char*>(buffer), n * sizeof(ExtT));
             if (!str.good())
               throw GeographicErr("Failure reading data");
-            for (int j = 0; j < n; ++j)
-              // fix endian-ness and cast to IntT
-              array[i++] = IntT(bigendp == Math::bigendian ? buffer[j] :
-                                Math::swab<ExtT>(buffer[j]));
+            for (int j = 0; j < n; ++j) {
+              // fix endian-ness
+              ExtT x = bigendp == Math::bigendian ? buffer[j] :
+                Math::swab<ExtT>(buffer[j]);
+#if GEOGRAPHICLIB_PRECISION > 2
+              // typeid doesn't allow if constexpr here
+              if (typeid(ExtT) == typeid(double) &&
+                  typeid(IntT) == typeid(Math::real)) {
+                // readarray is used to read in coefficient data rapidly.  Thus
+                // 8.3n is stored in its IEEE double representation.  This is
+                // fine is the working precision is double.  However, when
+                // working at higher precision, how should be interpret the
+                // constant 8.3 appearing in a published table?  Possibilities
+                // are
+                //
+                // (a) treat this as an exact decimal number 83/10;
+                //
+                // (b) treat this as the approximate decimal representation of
+                // an exact double precision number 2336242306698445/2^48 =
+                // 8.300000000000000710542735760100185871124267578125
+                //
+                // Here use (a) if the number of significant digits in the
+                // number is 15 or less.  Otherwise, we use (b).
+                //
+                // We implement this as follows.  Any double which can be
+                // represented as a decimal number with precision 14 = digis10
+                // - 1 (= 15 sig figs) is treated as an approximation to that
+                // decimal number.  The high precision number is then obtained
+                // by reading the decimal number at that precision.  Otherwise
+                // the double is treated as exact.  The high precision number
+                // is obtained by adding zeros in the binary fraction.
+                //
+                // N.B. printing with precision 14 = digis10 - 1 allows short
+                // numbers to be represended with trailing zeros.  This isn't
+                // necessarily the case with precision = digits10, e.g., 8.3
+                // becomes 8.300000000000001.
+                //
+                // This prescription doesn't exactly implement the method
+                // proposed.  If the published table of numbers includes
+                // 8.300000000000001, this will be interpreted as 8.3.  This
+                // doesn't apply to any published magnetic or gravity data.
+                // E.g., the coefficients for EGM96, resp. EGM2008, are given
+                // with precision 11, resp. 14.
+                //
+                // This conversion of doubles to Math::real comes at a
+                // substantial cost.  It adds about 14 s to the time it takes
+                // to read the egm2008 gravity model for quad and mpfr
+                // precisions.  This is acceptable, however, because high
+                // precision is only used for benchmarking.
+                std::ostringstream str;
+                str << std::scientific
+                    << std::setprecision(std::numeric_limits<ExtT>::digits10-1)
+                    << x;
+                // Code for GEOGRAPHILIB_PRECISION > 2 and types double/real
+                if (val<ExtT>(str.str()) == x)
+                  array[i++] = val<IntT>(str.str());
+                else
+                  array[i++] = IntT(x);
+              } else {
+                // Code for GEOGRAPHILIB_PRECISION > 2 but types not
+                // double/real
+                array[i++] = IntT(x);
+              }
+#else
+              // Code for GEOGRAPHILIB_PRECISION <= 2
+              array[i++] = IntT(x);
+#endif
+            }
             k -= n;
           }
         }
@@ -390,10 +467,10 @@ namespace GeographicLib {
       static void writearray(std::ostream& str, const IntT array[], size_t num)
     {
 #if GEOGRAPHICLIB_PRECISION < 4
-      if (sizeof(IntT) == sizeof(ExtT) &&
-          std::numeric_limits<IntT>::is_integer ==
-          std::numeric_limits<ExtT>::is_integer &&
-          bigendp == Math::bigendian)
+      if constexpr (sizeof(IntT) == sizeof(ExtT) &&
+                    std::numeric_limits<IntT>::is_integer ==
+                    std::numeric_limits<ExtT>::is_integer &&
+                    bigendp == Math::bigendian)
         {
           // Data is compatible (including endian-ness).
           str.write(reinterpret_cast<const char*>(array), num * sizeof(ExtT));
@@ -448,7 +525,8 @@ namespace GeographicLib {
      * @param[in] equals character representing "equals" to separate KEY and
      *   VALUE, if NULL (the default) use first space character.
      * @param[in] comment character to use as the comment character; if
-     *   non-NULL everything after this character is discarded; default is '#'.
+     *   non-NULL, this character and everything after it is discarded; default
+     *   is '#'.
      * @exception std::bad_alloc if memory for the internal strings can't be
      *   allocated.
      * @return whether a key was found.
@@ -473,13 +551,15 @@ namespace GeographicLib {
      *   256 (i.e., about 77 decimal digits).
      * @return the resulting number of bits of precision.
      *
-     * This only has an effect when GEOGRAPHICLIB_PRECISION = 5.  The
+     * This only has an effect when GEOGRAPHICLIB_PRECISION >= 5.  The
      * precision should only be set once and before calls to any other
      * GeographicLib functions.  (Several functions, for example Math::pi(),
      * cache the return value in a static local variable.  The precision needs
      * to be set before a call to any such functions.)  In multi-threaded
      * applications, it is necessary also to set the precision in each thread
-     * (see the example GeoidToGTX.cpp).
+     * (see the example GeoidToGTX.cpp).  If GEOGRAPHICLIB_PRECISION > 5, then
+     * the precision is set to GEOGRAPHICLIB_PRECISION, the compile-time value,
+     * and \e ndigits is ignored.
      *
      * \note Use Math::digits() to return the current precision in bits.
      **********************************************************************/
@@ -568,24 +648,6 @@ namespace GeographicLib {
       return x < 0 ? std::string("-inf") :
         (x > 0 ? std::string("inf") : std::string("nan"));
     std::ostringstream s;
-#if GEOGRAPHICLIB_PRECISION == 4
-    // boost-quadmath treats precision == 0 as "use as many digits as
-    // necessary" (see https://svn.boost.org/trac/boost/ticket/10103 and
-    // https://github.com/boostorg/multiprecision/issues/416)
-    // Fixed by https://github.com/boostorg/multiprecision/pull/389
-    if (p == 0) {
-      using std::signbit; using std::fabs;
-      using std::round; using std::fmod;
-      int n = signbit(x) ? -1 : 1; x = fabs(x);
-      Math::real ix = round(x); // Rounds ties away from zero (up for positive)
-      // Implement the "round ties to even" rule
-      if (2 * (ix - x) == 1 && fmod(ix, Math::real(2)) == 1) --ix;
-      s << std::fixed << std::setprecision(1) << n*ix;
-      std::string r(s.str());
-      // strip off trailing ".0"
-      return r.substr(0, (std::max)(int(r.size()) - 2, 0));
-    }
-#endif
     if (p >= 0) s << std::fixed << std::setprecision(p);
     s << x; return s.str();
   }

@@ -53,10 +53,10 @@
 
 
 .sampleAlong <- function(x, interval) {
-	if (inherits(x, 'SpatialPolygons')) {
-		line <- methods::as(line, 'SpatialLines')
+	if (inherits(x, 'sp::SpatialPolygons')) {
+		line <- methods::as(line, 'sp::SpatialLines')
 	}
-	if (inherits(x, 'SpatialLines')) {
+	if (inherits(x, 'sp::SpatialLines')) {
 		requireNamespace('raster')
 		x <- raster::geom(x)
 		allpts <- NULL
@@ -74,10 +74,10 @@
     
 
 .sampleAlongPerpendicular <- function(x, interval, pdist, np=1 ) {
-	if (inherits(x, 'SpatialPolygons')) {
-		line <- methods::as(line, 'SpatialLines')
+	if (inherits(x, 'sp::SpatialPolygons')) {
+		line <- methods::as(line, 'sp::SpatialLines')
 	}
-	if (inherits(x, 'SpatialLines')) {
+	if (inherits(x, 'sp::SpatialLines')) {
 		requireNamespace('raster')
 		x <- raster::geom(x)
 		allpts <- NULL

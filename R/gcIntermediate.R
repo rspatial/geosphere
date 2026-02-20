@@ -90,12 +90,12 @@ gcIntermediate <- function( p1, p2, n=50, breakAtDateLine=FALSE, addStartEnd=FAL
 	if (sp) {
 		for (i in 1:length(res)) {
 			if (! is.list(res[[i]])) {
-				res[[i]] <- Lines( list( Line (res[[i]])), ID=as.character(i)) 	
+				res[[i]] <- sp::Lines( list( sp::Line (res[[i]])), ID=as.character(i)) 	
 			} else {
-				res[[i]] <- Lines( list( Line (res[[i]][[1]]), Line(res[[i]][[2]])), ID=as.character(i))
+				res[[i]] <- sp::Lines( list( sp::Line (res[[i]][[1]]), sp::Line(res[[i]][[2]])), ID=as.character(i))
 			}
 		}
-		res <- SpatialLines(res, CRS("+proj=longlat +ellps=WGS84"))
+		res <- sp::SpatialLines(res, sp::CRS("+proj=longlat +ellps=WGS84"))
 		
 	} else if (nrow(p) == 1 ) {
 		res <- res[[1]]

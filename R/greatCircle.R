@@ -21,7 +21,7 @@ greatCircle <- function(p1, p2, n=360, sp=FALSE) {
 		if (sp) {
 			lat <- gcLat(p1, p2, 180)
 			res <- list(rbind(cbind(-180, lat), res))
-			res <- SpatialLines( list( Lines( list( Line (res)), ID=as.character(1)) ),  CRS("+proj=longlat +ellps=WGS84"))
+			res <- sp::SpatialLines( list( sp::Lines( list( sp::Line (res)), ID=as.character(1)) ),  sp::CRS("+proj=longlat +ellps=WGS84"))
 		}
 	} else {
 		res <- list()
@@ -34,9 +34,9 @@ greatCircle <- function(p1, p2, n=360, sp=FALSE) {
 			for (i in 1:length(res)) {
 				lat <- gcLat(p1[i,], p2[i,], 180)
 				res[[i]] <- rbind(cbind(-180, lat), res[[i]])
-				res[[i]] <- Lines( list( Line (res[[i]])), ID=as.character(i)) 	
+				res[[i]] <- sp::Lines( list( sp::Line (res[[i]])), ID=as.character(i)) 	
 			}
-			res <- SpatialLines(res, CRS("+proj=longlat +ellps=WGS84"))
+			res <- sp::SpatialLines(res, sp::CRS("+proj=longlat +ellps=WGS84"))
 		}
 	}
 	return(res)

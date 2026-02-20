@@ -2,7 +2,7 @@
  * \file Geodesic.cpp
  * \brief Implementation for GeographicLib::Geodesic class
  *
- * Copyright (c) Charles Karney (2009-2022) <charles@karney.com> and licensed
+ * Copyright (c) Charles Karney (2009-2025) <karney@alum.mit.edu> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  *
@@ -26,25 +26,19 @@
  * - s and c prefixes mean sin and cos
  **********************************************************************/
 
-#include <algorithm> // std::min
-#include <cmath>
-#include <limits> // std::numeric_limits
-#include <memory> // std::swap
-//#include <__math/traits.h> // std::__math::isnan
 #include "Geodesic.h"
 #include "GeodesicLine.h"
 
 #if defined(_MSC_VER)
-// Squelch warnings about potentially uninitialized local variables,
-// constant conditional and enum-float expressions and mixing enums
-#  pragma warning (disable: 4701 4127 5055 5054)
+// Squelch warnings about potentially uninitialized local variables
+#  pragma warning (disable: 4701)
 #endif
 
 namespace GeographicLib {
 
   using namespace std;
 
-  Geodesic::Geodesic(real a, real f)
+  Geodesic::Geodesic(real a, real f, bool exact)
     : maxit2_(maxit1_ + Math::digits() + 10)
       // Underflow guard.  We require
       //   tiny_ * epsilon() > 0
@@ -60,6 +54,7 @@ namespace GeographicLib {
     , xthresh_(1000 * tol2_)
     , _a(a)
     , _f(f)
+    , _exact(exact)
     , _f1(1 - _f)
     , _e2(_f * (2 - _f))
     , _ep2(_e2 / Math::sq(_f1)) // e2 / (1 - e2)
@@ -81,14 +76,19 @@ namespace GeographicLib {
       // spherical case.
     , _etol2(real(0.1) * tol2_ /
              sqrt( fmax(real(0.001), fabs(_f)) * fmin(real(1), 1 - _f/2) / 2 ))
+    , _geodexact(_exact ? GeodesicExact(a, f) : GeodesicExact())
   {
-    if (!(isfinite(_a) && _a > 0))
-      throw GeographicErr("Equatorial radius is not positive");
-    if (!(isfinite(_b) && _b > 0))
-      throw GeographicErr("Polar semi-axis is not positive");
-    A3coeff();
-    C3coeff();
-    C4coeff();
+    if (_exact)
+      _c2 = _geodexact._c2;
+    else {
+      if (!(isfinite(_a) && _a > 0))
+        throw GeographicErr("Equatorial radius is not positive");
+      if (!(isfinite(_b) && _b > 0))
+        throw GeographicErr("Polar semiaxis is not positive");
+      A3coeff();
+      C3coeff();
+      C4coeff();
+    }
   }
 
   const Geodesic& Geodesic::WGS84() {
@@ -130,6 +130,10 @@ namespace GeographicLib {
                                  real& lat2, real& lon2, real& azi2,
                                  real& s12, real& m12, real& M12, real& M21,
                                  real& S12) const {
+    if (_exact)
+      return _geodexact.GenDirect(lat1, lon1, azi1, arcmode, s12_a12, outmask,
+                                  lat2, lon2, azi2,
+                                  s12, m12, M12, M21, S12);
     // Automatically supply DISTANCE_IN if necessary
     if (!arcmode) outmask |= DISTANCE_IN;
     return GeodesicLine(*this, lat1, lon1, azi1, outmask)
@@ -167,8 +171,12 @@ namespace GeographicLib {
                                   real& salp2, real& calp2,
                                   real& m12, real& M12, real& M21,
                                   real& S12) const {
+    if (_exact)
+      return _geodexact.GenInverse(lat1, lon1, lat2, lon2,
+                                   outmask, s12,
+                                   salp1, calp1, salp2, calp2,
+                                   m12, M12, M21, S12);
     // Compute longitude difference (AngDiff does this carefully).
-    using std::isnan;           // Needed for Centos 7, ubuntu 14
     real lon12s, lon12 = Math::AngDiff(lon1, lon2, lon12s);
     // Make longitude difference positive.
     int lonsign = signbit(lon12) ? -1 : 1;
@@ -207,7 +215,7 @@ namespace GeographicLib {
     // check, e.g., on verifying quadrants in atan2.  In addition, this
     // enforces some symmetries in the results returned.
 
-    real sbet1, cbet1, sbet2, cbet2, s12x, m12x;
+    real sbet1, cbet1, sbet2, cbet2, s12x, m12x = Math::NaN();
 
     Math::sincosd(lat1, sbet1, cbet1); sbet1 *= _f1;
     // Ensure cbet1 = +epsilon at poles; doing the fix on beta means that sig12
@@ -270,15 +278,7 @@ namespace GeographicLib {
       // 0.  Test case was
       //
       //    echo 20.001 0 20.001 0 | GeodSolve -i
-      //
-      // In fact, we will have sig12 > pi/2 for meridional geodesic which is
-      // not a shortest path.
-      // TODO: investigate m12 < 0 result for aarch/ppc (with -f -p 20)
-      // 20.001000000000001 0.000000000000000 180.000000000000000
-      // 20.001000000000001 0.000000000000000 180.000000000000000
-      // 0.0000000002 0.000000000000001 -0.0000000001
-      // 0.99999999999999989 0.99999999999999989 0.000
-      if (sig12 < 1 || m12x >= 0) {
+      if (sig12 < tol2_ || m12x >= 0) {
         // Need at least 2, to handle 90 0 90 180
         if (sig12 < 3 * tiny_ ||
             // Prevent negative s12 or m12 for short lines

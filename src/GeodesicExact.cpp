@@ -2,7 +2,7 @@
  * \file GeodesicExact.cpp
  * \brief Implementation for GeographicLib::GeodesicExact class
  *
- * Copyright (c) Charles Karney (2012-2022) <charles@karney.com> and licensed
+ * Copyright (c) Charles Karney (2012-2025) <karney@alum.mit.edu> and licensed
  * under the MIT/X11 License.  For more information, see
  * https://geographiclib.sourceforge.io/
  *
@@ -28,11 +28,11 @@
 
 #include "GeodesicExact.h"
 #include "GeodesicLineExact.h"
+#include <vector>
 
 #if defined(_MSC_VER)
-// Squelch warnings about potentially uninitialized local variables,
-// constant conditional and enum-float expressions and mixing enums
-#  pragma warning (disable: 4701 4127 5055 5054)
+// Squelch warnings about potentially uninitialized local variables
+#  pragma warning (disable: 4701)
 #endif
 
 namespace GeographicLib {
@@ -83,7 +83,7 @@ namespace GeographicLib {
     if (!(isfinite(_a) && _a > 0))
       throw GeographicErr("Equatorial radius is not positive");
     if (!(isfinite(_b) && _b > 0))
-      throw GeographicErr("Polar semi-axis is not positive");
+      throw GeographicErr("Polar semiaxis is not positive");
 
     // Required number of terms in DST for full accuracy for all precisions as
     // a function of n in [-0.99, 0.99].  Values determined by running
@@ -356,7 +356,7 @@ namespace GeographicLib {
       12,13,13,13,13,13,13,13,13,13,13,13,14,14,14,14,14,14,15,15,15,15,15,15,
       15,16,16,16,17,17,17,17,18,18,19,20,21,23,24
     };
-#elif GEOGRAPHICLIB_PRECISION == 5
+#elif GEOGRAPHICLIB_PRECISION >= 5
     static const unsigned char narr[2*ndiv+1] = {
       27,26,24,23,22,22,21,21,20,20,20,19,19,19,19,18,18,18,18,18,17,17,17,17,
       17,17,17,17,16,16,16,16,16,16,16,15,15,15,15,15,15,15,15,15,15,15,15,14,
@@ -450,7 +450,6 @@ namespace GeographicLib {
     // Compute longitude difference (AngDiff does this carefully).  Result is
     // in [-180, 180] but -180 is only for west-going geodesics.  180 is for
     // east-going and meridional geodesics.
-    using std::isnan;           // Needed for Centos 7, ubuntu 14
     real lon12s, lon12 = Math::AngDiff(lon1, lon2, lon12s);
     // Make longitude difference positive.
     int lonsign = signbit(lon12) ? -1 : 1;
@@ -489,7 +488,7 @@ namespace GeographicLib {
     // check, e.g., on verifying quadrants in atan2.  In addition, this
     // enforces some symmetries in the results returned.
 
-    real sbet1, cbet1, sbet2, cbet2, s12x, m12x;
+    real sbet1, cbet1, sbet2, cbet2, s12x, m12x = Math::NaN();
     // Initialize for the meridian.  No longitude calculation is done in this
     // case to let the parameter default to 0.
     EllipticFunction E(-_ep2);
@@ -555,10 +554,7 @@ namespace GeographicLib {
       // 0.  Test case was
       //
       //    echo 20.001 0 20.001 0 | GeodSolve -i
-      //
-      // In fact, we will have sig12 > pi/2 for meridional geodesic which is
-      // not a shortest path.
-      if (sig12 < 1 || m12x >= 0) {
+      if (sig12 < tol2_ || m12x >= 0) {
         // Need at least 2, to handle 90 0 90 180
         if (sig12 < 3 * tiny_ ||
             // Prevent negative s12 or m12 for short lines
@@ -742,10 +738,7 @@ namespace GeographicLib {
         I4Integrand i4(_ep2, k2);
         vector<real> C4a(_nC4);
         _fft.transform(i4, C4a.data());
-        real
-          B41 = DST::integral(ssig1, csig1, C4a.data(), _nC4),
-          B42 = DST::integral(ssig2, csig2, C4a.data(), _nC4);
-        S12 = A4 * (B42 - B41);
+        S12 = A4 * DST::integral(ssig1, csig1, ssig2, csig2, C4a.data(), _nC4);
       } else
         // Avoid problems with indeterminate sig1, sig2 on equator
         S12 = 0;
@@ -1177,7 +1170,6 @@ namespace GeographicLib {
 
   Math::real GeodesicExact::I4Integrand::asinhsqrt(real x) {
     // return asinh(sqrt(x))/sqrt(x)
-    using std::sqrt; using std::asinh; using std::asin;
     return x == 0 ? 1 :
       (x > 0 ? asinh(sqrt(x))/sqrt(x) :
        asin(sqrt(-x))/sqrt(-x)); // NaNs end up here
@@ -1186,7 +1178,6 @@ namespace GeographicLib {
     // This differs by from t as defined following Eq 61 in Karney (2013) by
     // the final subtraction of 1.  This changes nothing since Eq 61 uses the
     // difference of two evaluations of t and improves the accuracy(?).
-    using std::sqrt;
     // Group terms to minimize roundoff
     // with x = ep2, this is the same as
     // e2/(1-e2) + (atanh(e)/e - 1)
@@ -1194,14 +1185,12 @@ namespace GeographicLib {
   }
   Math::real GeodesicExact::I4Integrand::td(real x) {
     // d t(x) / dx
-    using std::sqrt;
     return x == 0 ? 4/real(3) :
       // Group terms to minimize roundoff
       1 + (1 - asinhsqrt(x) / sqrt(1+x)) / (2*x);
   }
   // Math::real GeodesicExact::I4Integrand::Dt(real x, real y) {
   //   // ( t(x) - t(y) ) / (x - y)
-  //   using std::sqrt; using std::fabs; using std::asinh; using std::asin;
   //   if (x == y) return td(x);
   //   if (x * y <= 0) return ( t(x) - t(y) ) / (x - y);
   //   real
@@ -1218,7 +1207,6 @@ namespace GeographicLib {
   Math::real GeodesicExact::I4Integrand::DtX(real y) const {
     // idiot version:
     // return ( tX - t(y) ) / (X - y);
-    using std::sqrt; using std::fabs; using std::asinh; using std::asin;
     if (X == y) return tdX;
     if (X * y <= 0) return ( tX - t(y) ) / (X - y);
     real
@@ -1237,14 +1225,12 @@ namespace GeographicLib {
     , tdX( td(X) )
     , _k2( k2 )
   {
-    using std::fabs; using std::sqrt; using std::asinh; using std::asin;
     sX = sqrt(fabs(X));     // ep
     sX1 =  sqrt(1 + X);     // 1/(1-f)
     sXX1 = sX * sX1;
     asinhsX = X > 0 ? asinh(sX) : asin(sX); // atanh(e)
   }
   Math::real GeodesicExact::I4Integrand::operator()(real sig) const {
-    using std::sin;
     real ssig = sin(sig);
     return - DtX(_k2 * Math::sq(ssig)) * ssig/2;
   }
