@@ -53,19 +53,16 @@
 
 
 .sampleAlong <- function(x, interval) {
-	if (inherits(x, 'sp::SpatialPolygons')) {
-		line <- methods::as(line, 'sp::SpatialLines')
+	if (inherits(x, 'SpatialPolygons')) {
+		x <- terra::as.lines(terra::vect(x))
+	} else if (inherits(x, 'SpatialLines')) {
+		x <- terra::vect(x)
+	} else if (inherits(x, 'sf')) {
+		x <- terra::as.lines(terra::vect(x))
 	}
-	if (inherits(x, 'sp::SpatialLines')) {
-		requireNamespace('raster')
-		x <- raster::geom(x)
-		allpts <- NULL
-		for (p in unique(x[, 'cump'])) {
-			y <- x[x[, 'cump']==p, c('x', 'y')]
-			pts <- .evenspace(y, interval, direction=FALSE)
-			allpts <- rbind(allpts, pts)
-		}
-		return(allpts)
+	if (inherits(x, "SpatVector")) {
+		x <- terra::densify(x, interval)
+		terra::crds(x)
 	} else {
 		x <- .pointsToMatrix(x)
 		.evenspace(x, interval, direction=FALSE)
@@ -74,15 +71,19 @@
     
 
 .sampleAlongPerpendicular <- function(x, interval, pdist, np=1 ) {
-	if (inherits(x, 'sp::SpatialPolygons')) {
-		line <- methods::as(line, 'sp::SpatialLines')
+	if (inherits(x, 'SpatialPolygons')) {
+		line <- terra::as.lines(terra::vect(line))
+	} else if (inherits(x, 'SpatialLines')) {
+		line <- terra::vect(line)
+	} else if (inherits(x, "sf")) {
+		line <- terra::vect(line)
 	}
-	if (inherits(x, 'sp::SpatialLines')) {
-		requireNamespace('raster')
-		x <- raster::geom(x)
+	if (inherits(line, "SpatVector")) {
+		x <- data.frame(terra::geom(x))
 		allpts <- NULL
-		for (p in unique(x[, 'cump'])) {
-			y <- x[x[, 'cump']==p, c('x', 'y')]
+		cump <- as.integer(interaction(x$geom, x$part))
+		for (p in unique(cump)) {
+			y <- x[cump==p, c('x', 'y')]
 			tspts <- .evenspace(y, interval) 
 			pts <- NULL
 			for (i in 1:np) {

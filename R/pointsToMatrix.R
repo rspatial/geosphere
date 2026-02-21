@@ -6,6 +6,10 @@
 
 
 .pointsToMatrix <- function(p, checkLonLat=TRUE, poly=FALSE) {
+	if (inherits(p, "sf")) {
+		p <- terra::vect(p)
+	}
+
 	if (inherits(p, 'SpatVector')) {
 		stopifnot(terra::geomtype(p) == "points")
 		test <- terra::is.lonlat(p)
@@ -17,6 +21,7 @@
 			}
 		}
 		p <- terra::crds(p)
+
 	} else if (inherits(p, 'SpatialPoints')) {
 		test <- !sp::is.projected(p)
 		if (! isTRUE (test) ) {

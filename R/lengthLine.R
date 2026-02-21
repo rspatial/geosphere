@@ -6,18 +6,20 @@
 
 lengthLine <- function(line) {
 
-	if (inherits(line, 'sp::SpatialPolygons')) {
-		requireNamespace('raster')
-		line <- raster::geom(methods::as(line, 'sp::SpatialLines'))
-	} else if (inherits(line, 'sp::SpatialLines')) {
-		requireNamespace('raster')
-		line <- raster::geom(line)
-	} else {
+	if (inherits(line, 'SpatialPolygons')) {
+		line <- terra::as.lines(terra::vect(line))
+	} else if (inherits(line, 'SpatialLines')) {
+		line <- terra::vect(line)
+	} else if (inherits(line, 'sf')) {
+		line <- terra::as.lines(terra::vect(line))
+	} 
+	if (inherits(line, "SpatVector")) {
+		line <- terra::geom(line)	
+	} else {	
 		line <- cbind(object=1, part=1, cump=1, line[, 1:2])
 		colnames(line)[4:5] <- c('x', 'y')
 	}
 
-	
 	ids <- unique(line[,1])
 	len <- rep(0, length(ids))
 	for (i in 1:length(ids)) {

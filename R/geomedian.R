@@ -44,9 +44,8 @@
 
 ..geomedian_ndcor <- function(xy, w=NULL, threshold=100, maxiter=100) {
 	
-	requireNamespace('raster')
-	if (inherits(xy, 'sp::SpatialPolygons') | inherits(xy, 'SpatialPoints')) {
-		stopifnot(raster::isLonLat(xy)) 
+	if (inherits(xy, 'SpatialPolygons') | inherits(xy, 'SpatialPoints')) {
+		stopifnot(terra::is.lonlat(terra::vect(xy))) 
 		xy <- sp::coordinates(xy)
 	} 
 

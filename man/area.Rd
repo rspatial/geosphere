@@ -6,6 +6,8 @@
 \alias{areaPolygon}
 \alias{areaPolygon,matrix-method}
 \alias{areaPolygon,data.frame-method}
+\alias{areaPolygon,SpatVector-method}
+\alias{areaPolygon,sf-method}
 \alias{areaPolygon,SpatialPolygons-method}
 
 
@@ -24,7 +26,7 @@ Compute the area of a polygon in angular coordinates (longitude/latitude) on an 
 }
 
 \arguments{
- \item{x}{longitude/latitude of the points forming a polygon; Must be a matrix or data.frame of 2 columns (first one is longitude, second is latitude) or a SpatialPolygons* object}
+ \item{x}{longitude/latitude of the points forming a polygon; Must be a matrix or data.frame of 2 columns (first one is longitude, second is latitude) or a SpatVector, sf, or SpatialPolygons* object}
  \item{a}{major (equatorial) radius of the ellipsoid}
  \item{f}{ellipsoid flattening. The default value is for WGS84 }
  \item{...}{Additional arguments. None implemented}  

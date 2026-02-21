@@ -44,8 +44,16 @@ function(x, nbands='fixed', n=100, res=0.1, fun, r=6378137, ...) {
 
 setMethod("span", signature(x='SpatialPolygons'), 
 function(x, nbands='fixed', n=100, res=0.1, fun, ...) {
+	span(terra::vect(x), nbands=nbands, n=n, res=res, fun=fun, ...)
+})
 
-	#if (!requireNamespace('raster')) {stop('you need to install the "raster" package to use this function')}
+setMethod("span", signature(x='sf'), 
+function(x, nbands='fixed', n=100, res=0.1, fun, ...) {
+	span(terra::vect(x), nbands=nbands, n=n, res=res, fun=fun, ...)
+})
+
+setMethod("span", signature(x='SpatVector'), 
+function(x, nbands='fixed', n=100, res=0.1, fun, ...) {
 	
 	if (! nbands %in% c('fixed', 'variable')) {
 		stop('bandwidth should be "fixed" or "variable"')
@@ -59,7 +67,7 @@ function(x, nbands='fixed', n=100, res=0.1, fun, ...) {
 		}
 	}
 
-	npol <- length(x@polygons)
+	npol <- nrow(x)
 	lonspan <- list()
 	latspan <- list()
 	lon <- list()
@@ -67,20 +75,20 @@ function(x, nbands='fixed', n=100, res=0.1, fun, ...) {
 	
 	for (i in 1:npol) {
 		pp <- x[i,]
-		rs <- raster::raster(pp)
+		rs <- terra::rast(pp)
 		if (nbands == 'fixed') {
 			dim(rs) <- c(n, n)
 		} else {
-			raster::res(rs) <- res
+			terra::res(rs) <- res
 		}
 				
-		latitude <- raster::yFromRow(rs, 1:nrow(rs))
-		longitude <- raster::xFromCol(rs, 1:ncol(rs))
-		xd <- distGeo(cbind(0,latitude), cbind(raster::xres(rs),latitude), ...)
-		yd <- distGeo(cbind(0,0), cbind(0,raster::yres(rs)), ...)
+		latitude <- terra::yFromRow(rs, 1:nrow(rs))
+		longitude <- terra::xFromCol(rs, 1:ncol(rs))
+		xd <- distGeo(cbind(0,latitude), cbind(terra::xres(rs),latitude), ...)
+		yd <- distGeo(cbind(0,0), cbind(0,terra::yres(rs)), ...)
 		
-		rs <- raster::rasterize(pp, rs, silent=TRUE)
-		rs <- raster::getValues(rs, format='matrix')
+		rs <- terra::rasterize(pp, rs)
+		rs <- terra::values(rs, format='matrix')
 		latspan[[i]] <- as.vector(apply(rs, 1, sum, na.rm=TRUE) * yd)
 		lonspan[[i]] <- as.vector(apply(rs, 2, sum, na.rm=TRUE) * xd)
 		lat[[i]] <- latitude

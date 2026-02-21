@@ -37,10 +37,10 @@ dist2Line <- function(p, line, distfun=distGeo) {
 
 	p <- .pointsToMatrix(p)
 	
-	if (inherits(line, 'sp::SpatialPolygons')) {
+	if (inherits(line, 'SpatialPolygons')) {
 		line <- methods::as(line, 'sp::SpatialLines')
 	}
-	if (inherits(line, 'sp::SpatialLines')) {
+	if (inherits(line, 'SpatialLines')) {
 		return( .spDistPoint2Line(p, line, distfun) )
 	}
 

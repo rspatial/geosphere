@@ -47,7 +47,7 @@
  
  
 makePoly <- function(p, interval=10000, sp=FALSE, ...) {
-	if (inherits(p, 'sp::SpatialPolygons')) {
+	if (inherits(p, 'SpatialPolygons')) {
 		test <- !sp::is.projected(p)
 		if (! isTRUE (test) ) {
 			if (is.na(test)) {
@@ -72,7 +72,7 @@ makePoly <- function(p, interval=10000, sp=FALSE, ...) {
 			polys[[i]] <- sp::Polygons(partlist, i)
 		}
 		polys <- sp::SpatialPolygons(polys)
-		if (inherits(p, 'sp::SpatialPolygonsDataFrame')) {
+		if (inherits(p, 'SpatialPolygonsDataFrame')) {
 			rownames(p@data) <- 1:nrow(p@data)
 			polys <- sp::SpatialPolygonsDataFrame(polys, p@data)	
 		}
@@ -98,7 +98,7 @@ makePoly <- function(p, interval=10000, sp=FALSE, ...) {
 
 
 makeLine <- function(p, interval=10000, sp=FALSE, ...) {
-	if (inherits(p, 'sp::SpatialLines')) {
+	if (inherits(p, 'SpatialLines')) {
 		test <- !sp::is.projected(p)
 		if (! isTRUE (test) ) {
 			if (is.na(test)) {
@@ -124,7 +124,7 @@ makeLine <- function(p, interval=10000, sp=FALSE, ...) {
 			lines[[i]] = sp::Lines(partlist, i)
 		}
 		lines <- sp::SpatialLines(lines)
-		if (inherits(p, 'sp::SpatialLinesDataFrame')) {
+		if (inherits(p, 'SpatialLinesDataFrame')) {
 			lines <- sp::SpatialLinesDataFrame(lines, p@data)	
 		}
 		lines@proj4string <- p@proj4string

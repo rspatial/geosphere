@@ -2,6 +2,8 @@
 
 \alias{span}
 \alias{span,SpatialPolygons-method}
+\alias{span,SpatVector-method}
+\alias{span,sf-method}
 \alias{span,matrix-method}
   
 \title{Span of polygons}
@@ -15,7 +17,7 @@ span(x, ...)
 }
 
 \arguments{
-\item{x}{a SpatialPolygons* object or a 2-column matrix (longitude/latitude)}
+\item{x}{a SpatVector, sf, or SpatialPolygons* object or a 2-column matrix (longitude/latitude)}
 \item{...}{Additional arguments, see Details}
 }
 

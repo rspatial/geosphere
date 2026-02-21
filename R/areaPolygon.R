@@ -15,13 +15,57 @@ setMethod('areaPolygon', signature(x='data.frame'),
 } )
 
 
+setMethod('areaPolygon', signature(x='SpatVector'),
+function(x, a=6378137, f=1/298.257223563, ...) {
+
+	stopifnot(terra::geomtype(x) == "polygons")
+
+	if (terra::crs(x) == "") {
+		warning('Coordinate reference system of x is not set. Assuming it is degrees (longitude/latitude)!') 	
+	} else {
+		if (!terra::is.lonlat(x, perhaps=FALSE, warn=FALSE)) {
+			stop('The coordinate reference system of x is not longitude/latitude.')  		
+		}	
+	}
+
+	x <- data.frame(terra::geom(x))
+	x <- split(x, x$geom)
+	n <- length(x)
+	res <- vector(length=n)
+	for (i in 1:n) {
+		y <- x[[i]]
+		y <- split(y, y[,2])
+		parts <- length(y)
+		sumarea <- 0
+		for (j in 1:parts) {
+			crd <- y[[j]][, c("x", "y")]
+			ar <- areaPolygon(crd, a=a, f=f, ...)
+			if (y[[j]]$hole[1]) {
+				sumarea <- sumarea - ar
+			} else {
+				sumarea <- sumarea + ar
+			}
+		}
+		res[i] <- sumarea
+	}
+	res
+} 
+)
+
+ 
+setMethod('areaPolygon', signature(x='sf'),
+function(x, a=6378137, f=1/298.257223563, ...) {
+	areaPolygon(terra::vect(x), a=a, f=f)
+})
+
+
 setMethod('areaPolygon', signature(x='SpatialPolygons'), 
 function(x, a=6378137, f=1/298.257223563, ...) {
 
 	test <- sp::is.projected(x)
 	if ( isTRUE (test) ) {
 		if (is.na(test)) {
-			warning('Coordinate reference system of sp::SpatialPolygons object is not set. Assuming it is degrees (longitude/latitude)!') 
+			warning('Coordinate reference system of x is not set. Assuming it is degrees (longitude/latitude)!') 
 		} else {
 			stop('The coordinate reference system is not longitude/latitude.')  
 		}
