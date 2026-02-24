@@ -30,3 +30,4 @@ remotes::install_github("rspatial/geosphere")
 
 On Windows, you need to first install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) to get a C++ compiler that R can use. 
 
+
