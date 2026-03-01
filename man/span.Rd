@@ -41,6 +41,7 @@ A list, or a matrix if a function \code{fun} is specified. Values are in the uni
 \author{Robert J. Hijmans }
 
 \examples{
+\donttest{
 pol <- rbind(c(-180,-20), c(-160,5), c(-60, 0), c(-160,-60), c(-180,-20))
 plot(pol)
 lines(pol)
@@ -50,6 +51,7 @@ x <- span(pol)
 max(x$latspan)
 mean(x$latspan)
 plot(x$longitude, x$lonspan)
+}
 }
 
 \keyword{methods}

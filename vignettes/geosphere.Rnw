@@ -41,9 +41,9 @@ Geographic locations must be specified in longitude and latitude (and in that or
 
 The default unit of distance is meter; but this can be adjusted by supplying a different radius 'r' to functions. Directions are expressed in degrees (N = 0 and 360,  E = 90, S = 180, and W = 270 degrees). If arguments of functions that take several arguments (e.g. points, bearings, radius of the earth), do not have the same length (for vectors) or number of rows (for matrices) the shorter arguments are re-cycled.
 
-Many functions in this package are based on formulae provided by Ed Williams (\url{http://www.edwilliams.org/ftp/avsig/avform.txt}, and partly on javascript implementations of these formulae by Chris Veness (\url{http://www.movable-type.co.uk/scripts/latlong.html} )
+Many functions in this package are based on formulae provided by Ed Williams (\url{https://www.edwilliams.org/ftp/avsig/avform.txt}, and partly on javascript implementations of these formulae by Chris Veness (\url{https://www.movable-type.co.uk/scripts/latlong.html} )
 
-Most geodesic computations (for a spheroid rather than a sphere) use the GeographicLib by C.F.F. Karney (\url{http://geographiclib.sourceforge.net/}.
+Most geodesic computations (for a spheroid rather than a sphere) use the GeographicLib by C.F.F. Karney (\url{https://geographiclib.sourceforge.io/}).
 
 
 
@@ -329,7 +329,7 @@ legend(0,24, c('1','80','172'), lty=1, lwd=2, col=c('black', 'green', 'blue'),
 
 \noindent Sinnott, R.W, 1984. Virtues of the Haversine. Sky and Telescope 68(2): 159 
 
-\noindent Vincenty, T. 1975. Direct and inverse solutions of geodesics on the ellipsoid with application of nested equations. Survey Review 23(176): 88-93. Available here: \url{http://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf} 
+\noindent Vincenty, T. 1975. Direct and inverse solutions of geodesics on the ellipsoid with application of nested equations. Survey Review 23(176): 88-93. Available here: \url{https://www.ngs.noaa.gov/PUBS_LIB/inverse.pdf} 
 
 
 \end{hangparas}

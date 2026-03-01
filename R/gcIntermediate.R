@@ -66,7 +66,7 @@
 
 
 
-gcIntermediate <- function( p1, p2, n=50, breakAtDateLine=FALSE, addStartEnd=FALSE, sp=FALSE, sepNA=FALSE) {
+gcIntermediate <- function( p1, p2, n=50, breakAtDateLine=FALSE, addStartEnd=FALSE, output=NULL, sepNA=FALSE, sp=FALSE) {
 # Intermediate points on a great circle
 # source: http://www.edwilliams.org/avform.htm
 
@@ -87,7 +87,43 @@ gcIntermediate <- function( p1, p2, n=50, breakAtDateLine=FALSE, addStartEnd=FAL
 		}
 	}
 	
-	if (sp) {
+	if (is.null(output)) {
+		if (sp) {
+			for (i in 1:length(res)) {
+				if (! is.list(res[[i]])) {
+					res[[i]] <- sp::Lines( list( sp::Line (res[[i]])), ID=as.character(i)) 	
+				} else {
+					res[[i]] <- sp::Lines( list( sp::Line (res[[i]][[1]]), sp::Line(res[[i]][[2]])), ID=as.character(i))
+				}
+			}
+			res <- sp::SpatialLines(res, sp::CRS("+proj=longlat +ellps=WGS84"))
+			
+		} else if (nrow(p) == 1 ) {
+			res <- res[[1]]
+		} else if (sepNA) {
+			r <- res[[1]]
+			for (i in 2:length(res)) { 
+				r <- rbind(r, c(NA,NA), res[[i]]) 
+			}
+			return(r)
+		}
+		return(res)
+	} else if (output == "list") {
+		return(res)
+	} else if (output == "matrix") {
+		if (sepNA) {
+			r <- do.call(rbind, lapply(res, function(x) rbind(c(NA, NA), x)))
+			return(r[-1,])
+		} else {
+			return(do.call(rbind, res))	
+		}
+	} else if (output == "sf") {
+		r <- lapply(res, function(x) sf::st_linestring(x))
+		r <- sf::st_sf(geometry = sf::st_sfc(r, crs = 4326))	
+	} else if (output == "sv") {
+		r <- terra::vect(lapply(res, function(x) terra::vect(x, type="lines")))
+		terra::crs(r) <- "lonlat"
+	} else if (output=="sp") {
 		for (i in 1:length(res)) {
 			if (! is.list(res[[i]])) {
 				res[[i]] <- sp::Lines( list( sp::Line (res[[i]])), ID=as.character(i)) 	
@@ -95,19 +131,8 @@ gcIntermediate <- function( p1, p2, n=50, breakAtDateLine=FALSE, addStartEnd=FAL
 				res[[i]] <- sp::Lines( list( sp::Line (res[[i]][[1]]), sp::Line(res[[i]][[2]])), ID=as.character(i))
 			}
 		}
-		res <- sp::SpatialLines(res, sp::CRS("+proj=longlat +ellps=WGS84"))
-		
-	} else if (nrow(p) == 1 ) {
-		res <- res[[1]]
-	} else if (sepNA) {
-		r <- res[[1]]
-		for (i in 2:length(res)) { 
-			r <- rbind(r, c(NA,NA), res[[i]]) 
-		}
-		return(r)
+		res <- sp::SpatialLines(res, sp::CRS("+proj=longlat +ellps=WGS84"))	
 	}
-	
-	return(res)
 }
 
 

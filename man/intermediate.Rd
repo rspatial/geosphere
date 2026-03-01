@@ -12,19 +12,21 @@ Get intermediate points (way points) between the two locations with longitude/la
 }
 
 \usage{
-gcIntermediate(p1, p2, n=50, breakAtDateLine=FALSE, addStartEnd=FALSE, sp=FALSE, sepNA) 
+gcIntermediate(p1, p2, n=50, breakAtDateLine=FALSE, addStartEnd=FALSE, 
+				output=NULL, sepNA=FALSE, sp=FALSE) 
 
 }
 
 \arguments{
-  \item{p1}{longitude/latitude of a single point, in degrees. This can be a vector of two numbers, a matrix of 2 columns (first one is longitude, second is latitude) or a SpatialPoints* object}
+  \item{p1}{longitude/latitude of a single point, in degrees. This can be a vector of two numbers, a matrix of 2 columns (first one is longitude, second is latitude) or a spatial points object from terra (SpatVector) of sf}
   \item{p2}{as for \code{p1}}
   \item{n}{integer. The desired number of intermediate points}
   \item{breakAtDateLine}{logical. Return two matrices if the dateline is crossed?}
   \item{addStartEnd}{logical. Add p1 and p2 to the result?}
-  \item{sp}{logical. Return a SpatialLines object?}
-  \item{sepNA}{logical. Rather than as a list, return the values as a two column matrix with lines seperated by a row of NA values? (for use in 'plot')}
-}  
+  \item{output}{character. One of "list", "matrix", "sv" (SpatVector), "sf" or "sp". If \code{NULL}, the output is as in previous versions of this package for backwards compatibility}
+  \item{sepNA}{logical. Separate matrix values for different points by a row of NA values? (e.g., for use in 'plot')}
+  \item{sp}{logical. Depracated. Return a SpatialLines object? }
+}
 
 
 \value{
