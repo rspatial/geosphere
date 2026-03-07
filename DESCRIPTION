@@ -1,12 +1,12 @@
 Package: geosphere
 Type: Package
 Title: Spherical Trigonometry
-Version: 1.6-6
-Date: 2026-03-03
+Version: 1.6-7
+Date: 2026-03-07
 LinkingTo: Rcpp
 Imports: Rcpp
-Depends: R (>= 3.0.0)
-Suggests: methods, terra, sf, sp
+Depends: R (>= 3.0.0), methods
+Suggests: terra, sf, sp
 Authors@R: c(
 	person("Robert J.", "Hijmans", role = c("cre", "aut"),  email = "r.hijmans@gmail.com"),
 	person("Charles", "Karney", role = "ctb", comment="GeographicLib"),	

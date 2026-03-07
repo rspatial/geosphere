@@ -66,9 +66,12 @@
 
 
 
-gcIntermediate <- function( p1, p2, n=50, breakAtDateLine=FALSE, addStartEnd=FALSE, output=NULL, sepNA=FALSE, sp=FALSE) {
+gcIntermediate <- function( p1, p2, n=50, breakAtDateLine=FALSE, addStartEnd=FALSE, output=NULL, sepNA=FALSE) {
 # Intermediate points on a great circle
 # source: http://www.edwilliams.org/avform.htm
+
+
+	sp=FALSE
 
 	p1 <- .pointsToMatrix(p1)
 	p2 <- .pointsToMatrix(p2)

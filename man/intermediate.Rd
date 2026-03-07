@@ -13,7 +13,7 @@ Get intermediate points (way points) between the two locations with longitude/la
 
 \usage{
 gcIntermediate(p1, p2, n=50, breakAtDateLine=FALSE, addStartEnd=FALSE, 
-				output=NULL, sepNA=FALSE, sp=FALSE) 
+				output=NULL, sepNA=FALSE) 
 
 }
 
@@ -25,7 +25,6 @@ gcIntermediate(p1, p2, n=50, breakAtDateLine=FALSE, addStartEnd=FALSE,
   \item{addStartEnd}{logical. Add p1 and p2 to the result?}
   \item{output}{character. One of "list", "matrix", "sv" (SpatVector), "sf" or "sp". If \code{NULL}, the output is as in previous versions of this package for backwards compatibility}
   \item{sepNA}{logical. Separate matrix values for different points by a row of NA values? (e.g., for use in 'plot')}
-  \item{sp}{logical. Depracated. Return a SpatialLines object? }
 }
 
 
